@@ -3,9 +3,9 @@ html {
 }
 
 @media (min-width: 768px) {
-  html {
+/*  html {
     font-size: 16px;
-  }
+  }*/
 }
 
 html {
@@ -68,6 +68,13 @@ label.radio {
     border-radius: 10px
 }
 
+.date-header {
+    margin-top: 10px;
+    height: 30px;
+    border: 2px solid #eee;
+    border-radius: 10px
+}
+
     .form-control:focus {
         box-shadow: none;
         border: 2px solid #039BE5
@@ -88,6 +95,6 @@ label.radio {
     border-radius: 10px
 }
 
-h6 {
+h6, h5 {
     text-align: center;
 }

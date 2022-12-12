@@ -13,22 +13,107 @@
 <div id="app">
     @*    Paso 1*@
     <transition name="fade" mode="out-in">
-        <div class="page-one" id="page-one" v-if="!btnSiguiente">
+        <div class="page-one" id="page-one" v-if="pag == 1">
             <div class="container mt-5 mb-5 d-flex justify-content-center">
                 <div class="card px-1 py-4">
                     <div class="card-body">
-                        <h6 class="information mt-4">Por favor, seleccione un día y horario</h6>
+                        <h5 class="information mt-4">Por favor, seleccione un día y horario</h5>
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="form-group">
-                                    <input class="form-control" type="text" placeholder="Día">
+                                    <input type="button" class="form-control" placeholder="Día" v-on:click="setDia()" value="Día" style="text-align:left">
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="form-group">
-                                    <div class="input-group"> <input class="form-control" type="text" placeholder="Horario"> </div>
+                                    <div class="input-group">
+                                        <input class="form-control" type="button" placeholder="Horario" v-on:click="setHorario()" value="Horario" style="text-align:left">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="d-grid gap-2 col-12 mx-auto">
+                                <button class="btn btn-primary btn-block confirm-button" id="btnSiguiente">Siguiente</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @*    Paso Seleccionar dia*@
+        <div class="page-two" id="page-two" v-else-if="pag == 2">
+            <div class="container mt-5 mb-5 d-flex justify-content-center">
+                <div class="card px-1 py-4">
+                    <div class="card-body">
+                        <h5 class="information mt-4">Por favor, seleccione un día</h5>
+                        <div class="row">
+                            <div class="col-sm-12">
+
+
+                                <div class='input-group date' id='datetimepicker7'>
+                                    <input type='text' class="form-control" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+
+
+
+                                <div class="form-group">
+                                    <div class="input-group" style="height:45px">
+                                        <button class="form-control" style="height:35px"><<</button>
+                                        <button class="form-control" disabled style="height:35px" v-model="mesSeleccionado" value="Diciembre">Diciembre</button>
+                                        <button class="form-control" style="height:35px">>></button>
+                                    </div>
+                                    <div class="input-group" style="height:45px">
+                                        <button disabled class="btn-sm form-control" style="font-size: 11px;height:35px">Lunes</button>
+                                        <button disabled class="btn-sm form-control" style="font-size: 11px;height:35px">Martes</button>
+                                        <button disabled class="btn-sm form-control" style="font-size: 11px;height:35px">Miercoles</button>
+                                        <button disabled class="btn-sm form-control" style="font-size: 11px;height:35px">Jueves</button>
+                                        <button disabled class="btn-sm form-control" style="font-size: 11px;height:35px">Viernes</button>
+                                    </div>
+
+                                    <div class="input-group">
+                                        <button class="dia form-control" value="1" v-model="diaSeleccionado">1</button>
+                                        <button class="dia form-control" value="2" v-model="diaSeleccionado">2</button>
+                                        <button class="dia form-control" value="3" v-model="diaSeleccionado">3</button>
+                                        <button class="dia form-control" value="4" v-model="diaSeleccionado">4</button>
+                                        <button class="dia form-control" value="5" v-model="diaSeleccionado">5</button>
+                                    </div>
+                                    <div class="input-group">
+                                        <button class="dia form-control" value="8" v-model="diaSeleccionado">8</button>
+                                        <button class="dia form-control" value="9" v-model="diaSeleccionado">9</button>
+                                        <button class="dia form-control" value="10" v-model="diaSeleccionado">10</button>
+                                        <button class="dia form-control" value="11" v-model="diaSeleccionado">11</button>
+                                        <button class="dia form-control" value="12" v-model="diaSeleccionado">12</button>
+                                    </div>
+                                    <div class="input-group">
+                                        <button class="dia form-control" value="15" v-model="diaSeleccionado">15</button>
+                                        <button class="dia form-control" value="16" v-model="diaSeleccionado">16</button>
+                                        <button class="dia form-control" value="17" v-model="diaSeleccionado">17</button>
+                                        <button class="dia form-control" value="18" v-model="diaSeleccionado">18</button>
+                                        <button class="dia form-control" value="19" v-model="diaSeleccionado">19</button>
+                                    </div>
+                                    <div class="input-group">
+                                        <button class="dia form-control" value="1" v-model="diaSeleccionado">22</button>
+                                        <button class="dia form-control" value="1" v-model="diaSeleccionado">23</button>
+                                        <button class="dia form-control" value="1" v-model="diaSeleccionado">24</button>
+                                        <button class="dia form-control" value="1" v-model="diaSeleccionado">25</button>
+                                        <button class="dia form-control" value="1" v-model="diaSeleccionado">26</button>
+                                    </div>
+                                    <div class="input-group">
+                                        <button class="dia form-control" value="1" v-model="diaSeleccionado">29</button>
+                                        <button class="dia form-control" value="1" v-model="diaSeleccionado">30</button>
+                                        <button class="dia form-control" value="1" v-model="diaSeleccionado">31</button>
+                                        <button disabled class="dia form-control">1</button>
+                                        <button disabled class="dia form-control">2</button>
+
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -43,12 +128,49 @@
                 </div>
             </div>
         </div>
-        @*Paso 2*@
-        <div class="page-two" id="page-two" v-if="btnSiguiente">
+        @*    Paso Seleccionar Horario*@
+        <div class="page-three" id="page-three" v-else-if="pag == 3">
             <div class="container mt-5 mb-5 d-flex justify-content-center">
                 <div class="card px-1 py-4">
                     <div class="card-body">
-                        <h6 class="information mt-4">Por favor, ingresa tus datos personales</h6>
+                        <h5 class="information mt-4">Por favor, seleccione un horario</h5>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <input class="form-control" type="text" placeholder="Día">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <button type="button" class="form-control"> Lunes </button>
+                                        <button type="button" class="form-control"> Martes </button>
+                                        <button type="button" class="form-control"> Miércoles </button>
+                                        <button type="button" class="form-control"> Jueves </button>
+                                        <button type="button" class="form-control"> Viernes </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="d-grid gap-2 col-12 mx-auto">
+                                <button class="btn btn-primary btn-block confirm-button" v-on:click="nextStep()" id="btnSiguiente">Siguiente</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @*Paso Final*@
+        <div class="page-four" id="page-four" v-else-if="pag == 4">
+            <div class="container mt-5 mb-5 d-flex justify-content-center">
+                <div class="card px-1 py-4">
+                    <div class="card-body">
+                        <h5 class="information mt-4">Por favor, ingresa tus datos personales</h5>
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="form-group">
@@ -86,16 +208,35 @@
 
 <script>
 
+</script>
+
+<script>
+
     const app = Vue.createApp({
+
         data() {
             return {
-                btnSiguiente: false
+                pag: 1,
+                diaSeleccionado: 0,
+                mesSeleccionado: "",
+                horaSeleccionada: ""
             }
         },
+
         methods: {
             nextStep() {
-                this.btnSiguiente = true;
-            }
+                console.log(this.diaSeleccionado)
+                console.log(this.mesSeleccionado)
+
+                this.pag++;
+            },
+            setDia() {
+                this.pag = 2;
+            },
+            setHorario() {
+                this.pag = 3;
+
+            },
         }
     });
 
