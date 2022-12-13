@@ -51,73 +51,18 @@
                 <div class="card px-1 py-4">
                     <div class="card-body">
                         <h5 class="information mt-4">Por favor, seleccione un día</h5>
+                        <br />
                         <div class="row">
                             <div class="col-sm-12">
-
-
-                                <div class='input-group date' id='datetimepicker7'>
-                                    <input type='text' class="form-control" />
-                                    <span class="input-group-addon">
-                                        <span class="glyphicon glyphicon-calendar"></span>
-                                    </span>
-                                </div>
-
-
-
-                                <div class="form-group">
-                                    <div class="input-group" style="height:45px">
-                                        <button class="form-control" style="height:35px"><<</button>
-                                        <button class="form-control" disabled style="height:35px" v-model="mesSeleccionado" value="Diciembre">Diciembre</button>
-                                        <button class="form-control" style="height:35px">>></button>
-                                    </div>
-                                    <div class="input-group" style="height:45px">
-                                        <button disabled class="btn-sm form-control" style="font-size: 11px;height:35px">Lunes</button>
-                                        <button disabled class="btn-sm form-control" style="font-size: 11px;height:35px">Martes</button>
-                                        <button disabled class="btn-sm form-control" style="font-size: 11px;height:35px">Miercoles</button>
-                                        <button disabled class="btn-sm form-control" style="font-size: 11px;height:35px">Jueves</button>
-                                        <button disabled class="btn-sm form-control" style="font-size: 11px;height:35px">Viernes</button>
-                                    </div>
-
-                                    <div class="input-group">
-                                        <button class="dia form-control" value="1" v-model="diaSeleccionado">1</button>
-                                        <button class="dia form-control" value="2" v-model="diaSeleccionado">2</button>
-                                        <button class="dia form-control" value="3" v-model="diaSeleccionado">3</button>
-                                        <button class="dia form-control" value="4" v-model="diaSeleccionado">4</button>
-                                        <button class="dia form-control" value="5" v-model="diaSeleccionado">5</button>
-                                    </div>
-                                    <div class="input-group">
-                                        <button class="dia form-control" value="8" v-model="diaSeleccionado">8</button>
-                                        <button class="dia form-control" value="9" v-model="diaSeleccionado">9</button>
-                                        <button class="dia form-control" value="10" v-model="diaSeleccionado">10</button>
-                                        <button class="dia form-control" value="11" v-model="diaSeleccionado">11</button>
-                                        <button class="dia form-control" value="12" v-model="diaSeleccionado">12</button>
-                                    </div>
-                                    <div class="input-group">
-                                        <button class="dia form-control" value="15" v-model="diaSeleccionado">15</button>
-                                        <button class="dia form-control" value="16" v-model="diaSeleccionado">16</button>
-                                        <button class="dia form-control" value="17" v-model="diaSeleccionado">17</button>
-                                        <button class="dia form-control" value="18" v-model="diaSeleccionado">18</button>
-                                        <button class="dia form-control" value="19" v-model="diaSeleccionado">19</button>
-                                    </div>
-                                    <div class="input-group">
-                                        <button class="dia form-control" value="1" v-model="diaSeleccionado">22</button>
-                                        <button class="dia form-control" value="1" v-model="diaSeleccionado">23</button>
-                                        <button class="dia form-control" value="1" v-model="diaSeleccionado">24</button>
-                                        <button class="dia form-control" value="1" v-model="diaSeleccionado">25</button>
-                                        <button class="dia form-control" value="1" v-model="diaSeleccionado">26</button>
-                                    </div>
-                                    <div class="input-group">
-                                        <button class="dia form-control" value="1" v-model="diaSeleccionado">29</button>
-                                        <button class="dia form-control" value="1" v-model="diaSeleccionado">30</button>
-                                        <button class="dia form-control" value="1" v-model="diaSeleccionado">31</button>
-                                        <button disabled class="dia form-control">1</button>
-                                        <button disabled class="dia form-control">2</button>
-
-                                    </div>
-                                </div>
+                                <template v-if="pag == 2">
+                                    <Datepicker style="justify-content:center" v-model="date" model-type="dd/MM/yyyy" inline locale="es" :min-date="new Date()" :enable-time-picker="false" auto-apply />
+                                </template>
                             </div>
                         </div>
                         <br />
+                        <div v-if="pag == 2 && showError && date == ''">
+                            <p style="text-align:center">Por favor, ingrese una fecha</p>
+                        </div>
                         <div class="row">
                             <div class="d-grid gap-2 col-12 mx-auto">
                                 <button class="btn btn-primary btn-block confirm-button" v-on:click="nextStep()" id="btnSiguiente">Siguiente</button>
@@ -136,29 +81,31 @@
                         <h5 class="information mt-4">Por favor, seleccione un horario</h5>
                         <div class="row">
                             <div class="col-sm-12">
+                                <h6 class="information mt-4">Mañana</h6>
                                 <div class="form-group">
-                                    <input class="form-control" type="text" placeholder="Día">
+                                    <button type="button" class="form-control" v-on:click="selectHora('09:00')"> 09:00 </button>
+                                    <button type="button" class="form-control" v-on:click="selectHora('10:00')"> 10:00 </button>
+                                    <button type="button" class="form-control" v-on:click="selectHora('11:00')"> 11:00 </button>
+                                    <button type="button" class="form-control" v-on:click="selectHora('12:00')"> 12:00 </button>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-sm-12">
+                                <h6 class="information mt-4">Tarde</h6>
                                 <div class="form-group">
-                                    <div class="input-group">
-                                        <button type="button" class="form-control"> Lunes </button>
-                                        <button type="button" class="form-control"> Martes </button>
-                                        <button type="button" class="form-control"> Miércoles </button>
-                                        <button type="button" class="form-control"> Jueves </button>
-                                        <button type="button" class="form-control"> Viernes </button>
-                                    </div>
+                                    <button type="button" class="form-control" v-on:click="selectHora('15:00')"> 15:00 </button>
+                                    <button type="button" class="form-control" v-on:click="selectHora('16:00')"> 16:00 </button>
+                                    <button type="button" class="form-control" v-on:click="selectHora('17:00')"> 17:00 </button>
+                                    <button type="button" class="form-control" v-on:click="selectHora('18:00')"> 18:00 </button>
                                 </div>
                             </div>
                         </div>
                         <br />
                         <div class="row">
-                            <div class="d-grid gap-2 col-12 mx-auto">
-                                <button class="btn btn-primary btn-block confirm-button" v-on:click="nextStep()" id="btnSiguiente">Siguiente</button>
-                            </div>
+                            @*                            <div class="d-grid gap-2 col-12 mx-auto">
+                            <button class="btn btn-primary btn-block confirm-button" v-on:click="nextStep()" id="btnSiguiente">Siguiente</button>
+                            </div>*@
 
                         </div>
                     </div>
@@ -170,6 +117,27 @@
             <div class="container mt-5 mb-5 d-flex justify-content-center">
                 <div class="card px-1 py-4">
                     <div class="card-body">
+                        <h5 class="information mt-4">Resumen del turno:</h5>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label>Fecha:</label>
+                                    <input class="form-control" disabled type="text" v-model="date">
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label>Hora:</label>
+                                    <input class="form-control" disabled type="text" v-model="horaSeleccionada">
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label>Profesional:</label>
+                                    <input class="form-control" disabled type="text" value=" Lic. Lucia Nazarena Chang">
+                                </div>
+                            </div>
+                        </div>
                         <h5 class="information mt-4">Por favor, ingresa tus datos personales</h5>
                         <div class="row">
                             <div class="col-sm-12">
@@ -212,6 +180,8 @@
 
 <script>
 
+
+
     const app = Vue.createApp({
 
         data() {
@@ -219,24 +189,36 @@
                 pag: 1,
                 diaSeleccionado: 0,
                 mesSeleccionado: "",
-                horaSeleccionada: ""
+                diaMesSeleccionado: "",
+                horaSeleccionada: "",
+                date: "",
+                showError: false
             }
         },
-
+        components: {
+            Datepicker: VueDatePicker
+        },
         methods: {
             nextStep() {
-                console.log(this.diaSeleccionado)
-                console.log(this.mesSeleccionado)
-
-                this.pag++;
+                if (this.date == "") {
+                    this.showError = true;
+                } else {
+                    this.pag++;
+                }
             },
             setDia() {
+
                 this.pag = 2;
             },
             setHorario() {
                 this.pag = 3;
 
             },
+            selectHora(hora) {
+                this.horaSeleccionada = hora;
+                this.pag++;
+
+            }
         }
     });
 
