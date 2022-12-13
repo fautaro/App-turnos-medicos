@@ -125,38 +125,43 @@
                                     <input class="form-control" disabled type="text" v-model="date">
                                 </div>
                             </div>
-                            <div class="col-sm-12">
-                                <div class="form-group">
-                                    <label>Hora:</label>
-                                    <input class="form-control" disabled type="text" v-model="horaSeleccionada">
-                                </div>
-                            </div>
-                            <div class="col-sm-12">
-                                <div class="form-group">
-                                    <label>Profesional:</label>
-                                    <input class="form-control" disabled type="text" value=" Lic. Lucia Nazarena Chang">
-                                </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label>Hora:</label>
+                                <input class="form-control" disabled type="text" v-model="horaSeleccionada">
                             </div>
                         </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label>Profesional:</label>
+                                <input class="form-control" disabled type="text" value=" Lic. Lucia Nazarena Chang">
+                            </div>
+                        </div>
+
                         <h5 class="information mt-4">Por favor, ingresa tus datos personales</h5>
+                        <br />
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="form-group">
-                                    <input class="form-control" type="text" placeholder="Nombre y Apellido">
+                                    <label>Nombre y Apellido:</label>
+                                    <input class="form-control" type="text">
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="form-group">
-                                    <div class="input-group"> <input class="form-control" type="text" placeholder="Teléfono"> </div>
+                                    <label>Teléfono:</label>
+                                    <div class="input-group"> <input class="form-control" type="text"> </div>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="form-group">
-                                    <div class="input-group"> <input class="form-control" type="text" placeholder="Email"> </div>
+                                    <label>Email:</label>
+                                    <div class="input-group"> <input class="form-control" type="text"> </div>
                                 </div>
                             </div>
                         </div>
@@ -175,13 +180,6 @@
 </div>
 
 <script>
-
-</script>
-
-<script>
-
-
-
     const app = Vue.createApp({
 
         data() {
