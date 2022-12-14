@@ -98,3 +98,16 @@ label.radio {
 h6, h5 {
     text-align: center;
 }
+
+.btn-edit {
+    height: 48px;
+    margin-top:10px;
+}
+
+.img-circle {
+    border-radius: 50%;
+}
+
+hr {
+    color:gray;
+}
