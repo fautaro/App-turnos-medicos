@@ -21,17 +21,19 @@
                             <div class="col-sm-12">
                                 <div class="form-group">
                                     <h4 class="information mt-4" style="text-align: center;margin-bottom:20px">
-                                        Lic. Lucia Chang
+                                        Lic. Lucia Nazarena Chang
                                     </h4>
 
                                     <div style="text-align:center">
-                                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNL_ZnOTpXSvhf1UaK7beHey2BX42U6solRA&usqp=CAU" class="img-circle" style="width: 125px;" />
+                                        <img src="~/img/10.jpg" class="img-circle" style="width: 200px;" />
                                     </div>
                                 </div>
                                 <div style="margin-top:17px">
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                                    <p style="text-align:center">
+                                        Nutricionista UBA. Especialista en terapia nutricional orientada a patología crítica. Educación alimentaria nutricional. Nutrición pediátrica
+                                    </p>
                                 </div>
-                                                                <hr />
+                                <hr />
 
                             </div>
                         </div>
@@ -182,20 +184,20 @@
                         <h5 class="information mt-4">Resumen del turno:</h5>
                         <div class="row">
                             <div class="col-sm-12">
-                                <div class="form-group">
+                                <div class="form-group" style="margin-top:10px">
                                     <label>Fecha:</label>
                                     <input class="form-control" disabled type="text" v-model="fechaSeleccionada">
                                 </div>
                             </div>
                         </div>
                         <div class="col-sm-12">
-                            <div class="form-group">
+                            <div class="form-group" style="margin-top:10px">
                                 <label>Hora:</label>
                                 <input class="form-control" disabled type="text" v-model="horaSeleccionada">
                             </div>
                         </div>
                         <div class="col-sm-12">
-                            <div class="form-group">
+                            <div class="form-group" style="margin-top:10px">
                                 <label>Profesional:</label>
                                 <input class="form-control" disabled type="text" value=" Lic. Lucia Nazarena Chang">
                             </div>
@@ -213,15 +215,15 @@
                         </div>
                         <div class="row">
                             <div class="col-sm-12">
-                                <div class="form-group">
+                                <div class="form-group" style="margin-top:10px">
                                     <label>Teléfono:</label>
-                                    <div class="input-group"> <input class="form-control" type="number" v-model="pacTelefono"> </div>
+                                    <div class="input-group"> <input class="form-control" type="number" v-model="computedDataTelefono"> </div>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-sm-12">
-                                <div class="form-group">
+                                <div class="form-group" style="margin-top:10px">
                                     <label>Email:</label>
                                     <div class="input-group"> <input class="form-control" type="text" v-model="pacEmail"> </div>
                                 </div>
@@ -236,6 +238,27 @@
                         </div>
                         <div class="d-grid gap-2 col-12 mx-auto">
                             <button class="btn btn-primary btn-block confirm-button" v-on:click="btnConfirmarTurno()">Confirmar turno</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @*Cargando*@
+        <div class="page-three" id="page-three" v-else-if="pag == 5">
+            <div class="container mt-5 mb-5 d-flex justify-content-center">
+                <div class="card px-1 py-4">
+                    <div class="card-body">
+
+                        <h5 class="information mt-4">Generando reserva...</h5>
+                        <div class="row" style="margin-top:20px">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="d-flex justify-content-center">
+                                        <div class="spinner-border text-primary" role="status">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -262,6 +285,16 @@
                 pacEmail: ""
             }
         },
+        computed: {
+            computedDataTelefono: {
+                get() {
+                    return this.pacTelefono.toString()
+                },
+                set(val) {
+                    this.pacTelefono = Number(val)
+                }
+            }
+        },
         components: {
             Datepicker: VueDatePicker
         },
@@ -274,8 +307,7 @@
                 }
             },
             setDia(edit) {
-                if (edit)
-                {
+                if (edit) {
                     this.horaSeleccionada = "";
                 }
                 this.pag = 2;
@@ -306,8 +338,22 @@
                 }
             },
             btnConfirmarTurno() {
+
                 if (this.pacNombreApellido == "" || this.pacTelefono == "" || this.pacEmail == "" || this.fechaSeleccionada == "" || this.horaSeleccionada == "") {
                     this.showError = true;
+                } else {
+                    this.pag = 5;
+
+                    //Obj: Reserva
+                    let reserva = {
+                        cliente: this.pacNombreApellido,
+                        telefono: this.pacTelefono,
+                        pacEmail: this.pacEmail,
+                        fecha: this.fechaSeleccionada,
+                        hora: this.horaSeleccionada
+                    }
+                    console.log(reserva)
+
                 }
             }
         }

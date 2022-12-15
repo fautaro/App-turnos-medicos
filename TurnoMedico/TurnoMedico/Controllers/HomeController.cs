@@ -18,6 +18,11 @@ namespace TurnoMedico.Controllers
             return View();
         }
 
+        public async Task ConfirmarTurno()
+        {
+           
+        }
+
         public IActionResult Privacy()
         {
             return View();
