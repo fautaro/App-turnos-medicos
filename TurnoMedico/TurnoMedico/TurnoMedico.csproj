@@ -10,4 +10,8 @@
     <PackageReference Include="mercadopago-sdk" Version="2.2.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BusinessEntity\BusinessEntity.csproj" />
+  </ItemGroup>
+
 </Project>

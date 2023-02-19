@@ -1,12 +1,24 @@
-﻿using MercadoPago.Client.Preference;
+﻿using BusinessEntity.Models.Request;
+using BusinessEntity.Models.Response;
+using MercadoPago.Client.Preference;
 using MercadoPago.Config;
 using MercadoPago.Resource.Preference;
 
-namespace BusinessEntity
+namespace BusinessEntity.Services
 {
-    public class Reserva
+    public class ReservaService
     {
+        public async Task<ResponseDatosTurno> GuardarReserva(RequestDatosTurno datosTurno)
+        {
 
+            ResponseDatosTurno response = new ResponseDatosTurno()
+            {
+                Reserva_Id = 1,
+                Estado = "Confirmado",
+                Data = "El turno fue confirmado"
+            };
+            return response;
+        }
 
         public async Task PagarReserva()
         {

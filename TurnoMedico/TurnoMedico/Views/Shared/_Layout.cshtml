@@ -47,7 +47,6 @@
             <small>Fautaro - 2022</small>
         </div>
     </footer>
-    <script src="https://sdk.mercadopago.com/js/v2"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
 @*    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 *@    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
@@ -56,6 +55,22 @@
 *@
     <script src="~/js/site.js" asp-append-version="true"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
+    <script>
+        const mp = new MercadoPago('TEST-', {
+    locale: 'es-AR'
+    });
+
+    mp.checkout({
+    preference: {
+                id: ''
+    },
+    render: {
+    container: '.cho-container',
+    label: 'Pagar',
+    }
+    });
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
