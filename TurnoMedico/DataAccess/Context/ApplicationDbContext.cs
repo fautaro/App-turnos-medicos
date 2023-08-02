@@ -42,6 +42,8 @@ namespace DataAccess.Context
                 entity.Property(e => e.Activo).HasColumnName("Activo").IsRequired(); // Propiedad para el campo Activo
                 entity.Property(e => e.Profesional_Id).HasColumnName("Profesional_Id").IsRequired(); // Propiedad para el campo Profesional_Id
                 entity.Property(e => e.Link).HasColumnName("Link").HasMaxLength(50); // Propiedad para el campo Link con límite de 50 caracteres
+                entity.Property(e => e.Token).HasColumnName("Token").HasMaxLength(100); // Propiedad para el campo Link con límite de 50 caracteres
+
             });
 
 

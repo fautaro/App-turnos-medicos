@@ -21,11 +21,53 @@ namespace DataAccess.Services
 
 
 
-        public List<AgendaBloqueada> GetAgendaBloqueada(int profesional_Id)
+
+
+        // Agregar un nuevo turno
+        public async Task<Turno> AddTurno(Turno turno)
         {
             try
             {
-                List<AgendaBloqueada> agendaBloqueadaList = _dbContext.AgendaBloqueada.Where(e => e.Profesional_Id == profesional_Id && e.Activo).ToList();
+                await _dbContext.Turno.AddAsync(turno);
+                await _dbContext.SaveChangesAsync();
+
+                return turno;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+        // Eliminar un turno
+        public async Task<bool> CancelarTurno(int TurnoId)
+        {
+            try
+            {
+                var TurnoACancelar = await _dbContext.Turno.Where(e => e.Turno_Id == TurnoId).FirstOrDefaultAsync();
+                TurnoACancelar.Activo = false;
+                _dbContext.Turno.Update(TurnoACancelar);
+                await _dbContext.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+                throw;
+            }
+
+        }
+
+
+
+        // Metodos para Capa de validación
+
+        public async Task<List<AgendaBloqueada>> GetAgendaBloqueada(int profesional_Id)
+        {
+            try
+            {
+                List<AgendaBloqueada> agendaBloqueadaList = await _dbContext.AgendaBloqueada.Where(e => e.Profesional_Id == profesional_Id && e.Activo).ToListAsync();
 
                 // Devolver la lista obtenida
                 return agendaBloqueadaList;
@@ -37,43 +79,45 @@ namespace DataAccess.Services
                 throw;
             }
         }
-
-        // Agregar un nuevo turno
-        public Turno AddTurno(Turno turno)
+        public async Task<Turno> CheckTurno(DateTime fechaHora, int profesionalId)
         {
             try
             {
-                _dbContext.Turno.Add(turno);
-                _dbContext.SaveChanges();
+                var TurnoACancelar = await _dbContext.Turno.Where(e => e.Token == token).FirstOrDefaultAsync();
 
-                return turno;
+                return TurnoACancelar;
             }
             catch (Exception ex)
             {
-
                 throw;
             }
 
-
         }
-
-
-        // Eliminar un turno
-        public bool CancelarTurno(Turno turno)
+        public async Task<Turno> CheckToken(int TurnoId, string token)
         {
             try
             {
-                var TurnoACancelar = _dbContext.Turno.Where(e => e.Turno_Id == turno.Turno_Id).FirstOrDefault();
-                TurnoACancelar.Activo = false;
+                var TurnoACancelar = await _dbContext.Turno.Where(e => e.Token == token).FirstOrDefaultAsync();
 
-                _dbContext.Turno.Update(TurnoACancelar);
-
-                _dbContext.SaveChanges();
-                return true;
+                return TurnoACancelar;
             }
             catch (Exception ex)
             {
-                return false;
+                throw;
+            }
+
+        }
+
+        public async Task<Turno> CheckReservaId(int TurnoId, string token)
+        {
+            try
+            {
+                var TurnoACancelar = await _dbContext.Turno.Where(e => e.Turno_Id == TurnoId).FirstOrDefaultAsync();
+
+                return TurnoACancelar;
+            }
+            catch (Exception ex)
+            {
                 throw;
             }
 

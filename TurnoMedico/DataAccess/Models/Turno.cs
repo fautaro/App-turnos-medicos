@@ -25,6 +25,8 @@ namespace DataAccess.Models
         public int Profesional_Id { get; set; }
 
         public string? Link { get; set; }
+        public string? Token { get; set; }
+
 
     }
 }

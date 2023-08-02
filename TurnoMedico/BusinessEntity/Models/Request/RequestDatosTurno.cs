@@ -14,6 +14,8 @@ namespace BusinessEntity.Models.Request
         public string Fecha { get; set; }
         public string Hora { get; set; }
         public string Profesional { get; set; }
+        public int ProfesionalId { get; set; }
+
 
 
     }

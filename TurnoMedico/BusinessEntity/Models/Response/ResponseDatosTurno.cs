@@ -11,6 +11,8 @@ namespace BusinessEntity.Models.Response
         public int Reserva_Id { get; set; }
         public string Estado { get; set; }
         public bool Success { get; set; }
+        public string Mensaje { get; set; }
+
         public ResponseTurnoConfirmado TurnoConfirmado { get; set; }
     }
     
