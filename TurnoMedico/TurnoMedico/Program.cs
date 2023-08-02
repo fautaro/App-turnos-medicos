@@ -1,4 +1,7 @@
 using BusinessEntity.Services;
+using DataAccess.Context;
+using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +10,11 @@ builder.Services.AddControllersWithViews().AddJsonOptions(options =>
      {
          options.JsonSerializerOptions.PropertyNameCaseInsensitive = true; // Si es necesario
      });
+
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 
 builder.Services.AddMvc().AddRazorRuntimeCompilation();
 builder.Services.AddAuthentication();

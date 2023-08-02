@@ -15,6 +15,8 @@ namespace DataAccess.Context
         public DbSet<Profesion> Profesion { get; set; }
         public DbSet<Profesional> Profesional { get; set; }
         public DbSet<Turno> Turno { get; set; }
+        public DbSet<AgendaBloqueada> AgendaBloqueada { get; set; }
+
 
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
