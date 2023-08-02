@@ -3,13 +3,20 @@ using BusinessEntity.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews().AddJsonOptions(options =>
+     {
+         options.JsonSerializerOptions.PropertyNameCaseInsensitive = true; // Si es necesario
+     });
+
+builder.Services.AddMvc().AddRazorRuntimeCompilation();
+builder.Services.AddAuthentication();
+builder.Services.AddAuthorization();
+
 
 builder.Services.AddTransient<ReservaService, ReservaService>();
 builder.Services.AddTransient<ValidationService, ValidationService>();
 
 var app = builder.Build();
-
 
 
 // Configure the HTTP request pipeline.

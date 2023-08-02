@@ -5,7 +5,9 @@ VisualStudioVersion = 17.3.32819.101
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TurnoMedico", "TurnoMedico\TurnoMedico.csproj", "{141369C1-CB25-4C2B-B7F6-D710AD20AB96}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessEntity", "BusinessEntity\BusinessEntity.csproj", "{7D5768A3-9B58-4116-BB46-978BBE47AFBE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessEntity", "BusinessEntity\BusinessEntity.csproj", "{7D5768A3-9B58-4116-BB46-978BBE47AFBE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess", "DataAccess\DataAccess.csproj", "{4C7484C0-5B1C-41EF-A379-8CAAB11AB83E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{7D5768A3-9B58-4116-BB46-978BBE47AFBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D5768A3-9B58-4116-BB46-978BBE47AFBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D5768A3-9B58-4116-BB46-978BBE47AFBE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C7484C0-5B1C-41EF-A379-8CAAB11AB83E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C7484C0-5B1C-41EF-A379-8CAAB11AB83E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C7484C0-5B1C-41EF-A379-8CAAB11AB83E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C7484C0-5B1C-41EF-A379-8CAAB11AB83E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

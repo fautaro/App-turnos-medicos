@@ -1,4 +1,6 @@
-﻿<style>
+﻿
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
+<style>
     .fade-enter-active,
     .fade-leave-active {
         transition: opacity 0.5s ease;
@@ -9,9 +11,8 @@
         opacity: 0;
     }
 </style>
-
 <div id="app">
-    @*    Paso 1*@
+    @*    Pag 0*@
     <transition name="fade" mode="out-in">
         <div class="page-one" id="page-one" v-if="pag == 0">
             <div class="container mt-5 mb-5 d-flex justify-content-center">
@@ -47,6 +48,7 @@
                 </div>
             </div>
         </div>
+        @* Pag 1*@
         <div class="page-one" id="page-one" v-if="pag == 1">
             <div class="container mt-5 mb-5 d-flex justify-content-center">
                 <div class="card px-1 py-4">
@@ -98,7 +100,7 @@
                 </div>
             </div>
         </div>
-        @*    Paso Seleccionar dia*@
+        @*  Pag 2 -  Paso Seleccionar dia*@
         <div class="page-two" id="page-two" v-else-if="pag == 2">
             <div class="container mt-5 mb-5 d-flex justify-content-center">
                 <div class="card px-1 py-4">
@@ -132,7 +134,7 @@
                 </div>
             </div>
         </div>
-        @*    Paso Seleccionar Horario*@
+        @*  Pag 3  Paso Seleccionar Horario*@
         <div class="page-three" id="page-three" v-else-if="pag == 3">
             <div class="container mt-5 mb-5 d-flex justify-content-center">
                 <div class="card px-1 py-4">
@@ -170,7 +172,7 @@
                 </div>
             </div>
         </div>
-        @*Paso Final*@
+        @*Pag 4 - Paso Final*@
         <div class="page-four" id="page-four" v-else-if="pag == 4">
             <div class="container mt-5 mb-5 d-flex justify-content-center">
                 <div class="card px-1 py-4">
@@ -202,7 +204,7 @@
                                 <input class="form-control" disabled type="text" value=" Lic. Lucia Nazarena Chang">
                             </div>
                         </div>
-
+                        <br />
                         <h5 class="information mt-4">Por favor, ingresa tus datos personales</h5>
                         <br />
                         <div class="row">
@@ -230,8 +232,8 @@
                             </div>
                         </div>
                         <div class=" d-flex flex-column text-center px-5 mt-3 mb-3">
-                            <small class="agree-text">Al confirmar, serás redirigido a MercadoPago</small>
-                            <a href="#" class="terms">Términos y condiciones</a>
+                            <small class="agree-text"></small>
+                            <a href="#" class="terms"></a>
                         </div>
                         <div v-if="pag == 4 && showError && (pacNombreApellido == '' || pacTelefono == '' || pacEmail == '' || fechaSeleccionada == '' || horaSeleccionada == '')">
                             <p style="text-align:center">Por favor, complete todos los campos</p>
@@ -243,13 +245,13 @@
                 </div>
             </div>
         </div>
-        @*Cargando*@
+        @* Pag 5 - Cargando*@
         <div class="page-five" id="page-five" v-else-if="pag == 5">
             <div class="container mt-5 mb-5 d-flex justify-content-center">
                 <div class="card px-1 py-4">
                     <div class="card-body">
 
-                        <h5 class="information mt-4">Generando reserva...</h5>
+                        <h5 class="information mt-4">Confirmando turno</h5>
                         <div class="row" style="margin-top:20px">
                             <div class="col-sm-12">
                                 <div class="form-group">
@@ -264,19 +266,99 @@
                 </div>
             </div>
         </div>
-                <div class="page-six" id="page-six" v-else-if="pag == 6">
+        @* Pag 6 - Success o Error*@
+        <div class="page-six" id="page-six" v-else-if="pag == 6">
+            <div class="container mt-5 mb-5 d-flex justify-content-center">
+                <div class="card px-1 py-4" v-if="reservaSuccess">
+                    <div class="card-body">
+                        <h5 class="information mt-4">¡Tu turno ha sido confirmado correctamente!</h5>
+                        <div class="row" style="margin-top:20px">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="d-flex justify-content-center">
+                                        <div class="success-message">
+                                            El turno ha sido confirmado
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-center">
+                                        <div class="swal2-icon swal2-success swal2-icon-show" style="display: flex;">
+                                            <div class="swal2-success-circular-line-left" style="background-color: rgb(255, 255, 255);"></div>
+                                            <span class="swal2-success-line-tip"></span> <span class="swal2-success-line-long"></span>
+                                            <div class="swal2-success-ring"></div> <div class="swal2-success-fix" style="background-color: rgb(255, 255, 255);"></div>
+                                            <div class="swal2-success-circular-line-right" style="background-color: rgb(255, 255, 255);"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card px-1 py-4" v-else>
+                    <div class="card-body">
+                        <h5 class="information mt-4">No pudimos confirmar tu turno</h5>
+                        <div class="row" style="margin-top:20px">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="d-flex justify-content-center">
+                                        <div class="error-message">
+                                            Error al generar el turno
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-center">
+                                        <div class="swal2-icon swal2-info swal2-icon-show" style="display: flex;">
+                                            <div class="swal2-icon-content">i</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @* Pag 7 - Datos del turno*@
+        <div class="page-seven" id="page-seven" v-else-if="pag == 7">
             <div class="container mt-5 mb-5 d-flex justify-content-center">
                 <div class="card px-1 py-4">
                     <div class="card-body">
-
-                        <h5 class="information mt-4">MercadoPago</h5>
-                        <div class="cho-container" style="text-align:center"></div>
+                        <h5 class="information mt-4">Resumen del turno:</h5>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group" style="margin-top:10px">
+                                    <label>Fecha:</label>
+                                    <input class="form-control" disabled type="text" v-model="reservaConfirmada.fecha">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group" style="margin-top:10px">
+                                <label>Hora:</label>
+                                <input class="form-control" disabled type="text" v-model="reservaConfirmada.hora">
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group" style="margin-top:10px">
+                                <label>Profesional:</label>
+                                <input class="form-control" disabled type="text" v-model="reservaConfirmada.profesional">
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group" style="margin-top:10px">
+                                <label>Paciente:</label>
+                                <input class="form-control" disabled type="text" v-model="reservaConfirmada.cliente">
+                            </div>
+                        </div>
+                        <div class="d-grid gap-2 col-12 mx-auto" style="margin-top:60px">
+                            <button class="btn btn-primary btn-block confirm-button" v-on:click="">Guardar en Calendar</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </transition>
 </div>
+<!-- Agrega SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.js"></script>
 
 <script>
     const app = Vue.createApp({
@@ -284,16 +366,19 @@
         data() {
             return {
                 //Pagina Actual
-                pag: 6,
+                pag: 0,
                 //Fecha y Hora seleccionada
                 fechaSeleccionada: "",
                 horaSeleccionada: "",
-                //Variable para msotrar error
+                //Variable para mostrar error
                 showError: false,
                 //Datos del paciente
                 pacNombreApellido: "",
                 pacTelefono: "",
-                pacEmail: ""
+                pacEmail: "",
+                //Response Ajax
+                reservaSuccess: false,
+                reservaConfirmada: {},
             }
         },
         computed: {
@@ -349,34 +434,55 @@
                 }
             },
             btnConfirmarTurno() {
-
                 if (this.pacNombreApellido == "" || this.pacTelefono == "" || this.pacEmail == "" || this.fechaSeleccionada == "" || this.horaSeleccionada == "") {
                     this.showError = true;
                 } else {
                     this.pag = 5;
 
-                    //Obj: Reserva
-                    let reserva = {
-                        cliente: this.pacNombreApellido,
-                        telefono: this.pacTelefono,
-                        pacEmail: this.pacEmail,
-                        fecha: this.fechaSeleccionada,
-                        hora: this.horaSeleccionada
+                    //Obj: turno
+                    const turno = {
+                        Cliente: this.pacNombreApellido,
+                        Telefono: this.pacTelefono.toString(),
+                        Email: this.pacEmail,
+                        Fecha: this.fechaSeleccionada,
+                        Hora: this.horaSeleccionada,
+                        Profesional: 'Lucia Chang'
                     }
-                    console.log(reserva)
+
+                    console.log(JSON.stringify(turno))
+
+                    fetch('@Url.Action("ConfirmarTurno", "Home")', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json', // Indica que los datos son JSON
+                        },
+                        body: JSON.stringify(turno), // Convierte el objeto JSON a una cadena JSON
+                    })
+                        .then(response => response.json())
+                        .then(responseData => {
+                            console.log(responseData)
+                            if (responseData.success) {
+                                this.reservaSuccess = true;
+                                this.reservaConfirmada = responseData.turnoConfirmado
+                            }
+                            this.pag = 6;
+
+                            setTimeout(() => {
+                                console.log(this.reservaConfirmada)
+                                this.pag = 7;
+                            }, 3000)
+
+                        })
+                        .catch(error => {
+                            this.pag = 6;
+                            console.error('Error al enviar la solicitud:', error);
+                        });
 
                 }
-            }
+            },
+
         }
     });
 
     app.mount('#app');
-
-
-
-
-</script>
-
-<script>
-
 </script>

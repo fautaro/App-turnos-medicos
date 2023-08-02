@@ -8,7 +8,13 @@ namespace BusinessEntity.Models.Request
 {
     public class RequestDatosTurno
     {
-        public int Id { get; set; }
+        public string Cliente { get; set; }
+        public string Telefono { get; set; }
+        public string Email { get; set; }
+        public string Fecha { get; set; }
+        public string Hora { get; set; }
+        public string Profesional { get; set; }
+
 
     }
 }

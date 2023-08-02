@@ -26,17 +26,33 @@ namespace TurnoMedico.Controllers
             return View();
         }
 
-        public async Task PagarTurno()
+        //public async Task PagarTurno()
+        //{
+
+        //}
+        [HttpPost]
+        public async Task<ResponseDatosTurno> ConfirmarTurno([FromBody] RequestDatosTurno turno)
         {
 
-        }
+            await Task.Delay(4000);
 
-        public async Task ConfirmarTurno(RequestDatosTurno turno)
-        {
-           if (await _validationService.validateReserva(turno))
+            var response = new ResponseDatosTurno()
             {
-                ResponseDatosTurno reserva = await _reservaService.GuardarReserva(turno);
-            }
+                Reserva_Id = 100,
+                Estado = "C",
+                Success = false,
+                TurnoConfirmado = new ResponseTurnoConfirmado()
+                {
+                    Cliente = turno.Cliente,
+                    Telefono = turno.Telefono,
+                    Email = turno.Email,
+                    Fecha = turno.Fecha,
+                    Hora = turno.Hora,
+                    Profesional = turno.Profesional
+                }
+            };
+
+            return response;
         }
 
         public IActionResult Privacy()

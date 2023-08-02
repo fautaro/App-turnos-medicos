@@ -10,6 +10,19 @@ namespace BusinessEntity.Models.Response
     {
         public int Reserva_Id { get; set; }
         public string Estado { get; set; }
-        public string Data { get; set; }
+        public bool Success { get; set; }
+        public ResponseTurnoConfirmado TurnoConfirmado { get; set; }
+    }
+    
+
+    public class ResponseTurnoConfirmado
+    {
+        public string? Cliente { get; set; }
+        public string? Telefono { get; set; }
+        public string? Email { get; set; }
+        public string? Fecha { get; set; }
+        public string? Hora { get; set; }
+        public string? Profesional { get; set; }
+
     }
 }
