@@ -83,9 +83,9 @@ namespace DataAccess.Services
         {
             try
             {
-                var TurnoACancelar = await _dbContext.Turno.Where(e => e.Token == token).FirstOrDefaultAsync();
+                var TurnoRepetido = await _dbContext.Turno.Where(e => e.FechaHora == fechaHora && e.Profesional_Id == profesionalId).FirstOrDefaultAsync();
 
-                return TurnoACancelar;
+                return TurnoRepetido;
             }
             catch (Exception ex)
             {
@@ -121,6 +121,22 @@ namespace DataAccess.Services
                 throw;
             }
 
+        }
+
+
+        public async Task<Profesional> GetProfesional(string profesional)
+        {
+            try
+            {
+                var Profesional = await _dbContext.Profesional.Where(e => e.Alias == profesional).FirstOrDefaultAsync();
+
+                return Profesional;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }    
         }
     }
 }

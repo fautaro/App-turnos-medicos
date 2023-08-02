@@ -21,38 +21,65 @@ namespace TurnoMedico.Controllers
 
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index(string profesional)
         {
-            return View();
+            if (string.IsNullOrEmpty(profesional))
+            {
+                return View("NotFound");
+            }
+
+            var Profesional = await _validationService.ValidateProfesional(profesional);
+
+            if (Profesional != null && Profesional.Activo)
+            {
+                return View(Profesional);
+
+            }
+            else
+            {
+                return View("NotFound");
+            }
         }
 
-        //public async Task PagarTurno()
-        //{
-
-        //}
         [HttpPost]
         public async Task<ResponseDatosTurno> ConfirmarTurno([FromBody] RequestDatosTurno turno)
         {
-
-            await Task.Delay(4000);
-
-            var response = new ResponseDatosTurno()
+            try
             {
-                Reserva_Id = 100,
-                Estado = "C",
-                Success = false,
-                TurnoConfirmado = new ResponseTurnoConfirmado()
-                {
-                    Cliente = turno.Cliente,
-                    Telefono = turno.Telefono,
-                    Email = turno.Email,
-                    Fecha = turno.Fecha,
-                    Hora = turno.Hora,
-                    Profesional = turno.Profesional
-                }
-            };
+                await Task.Delay(4000);
 
-            return response;
+                var Response = await _reservaService.GuardarReserva(turno);
+
+                return Response;
+
+
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
+        }
+
+        [HttpPost]
+        public async Task<ResponseCancelarTurno> CancelarTurno([FromBody] RequestCancelarTurno turno)
+        {
+            try
+            {
+                await Task.Delay(4000);
+
+                var Response = await _reservaService.CancelarReserva(turno);
+
+                return Response;
+
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
         }
 
         public IActionResult Privacy()
@@ -67,3 +94,20 @@ namespace TurnoMedico.Controllers
         }
     }
 }
+
+
+//var response = new ResponseDatosTurno()
+//{
+//    Reserva_Id = 100,
+//    Estado = "C",
+//    Success = true,
+//    TurnoConfirmado = new ResponseTurnoConfirmado()
+//    {
+//        Cliente = turno.Nombre + turno.Apellido,
+//        Telefono = turno.Telefono,
+//        Email = turno.Email,
+//        Fecha = turno.Fecha,
+//        Hora = turno.Hora,
+//        Profesional = turno.Profesional
+//    }
+//};

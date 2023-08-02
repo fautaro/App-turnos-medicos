@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BusinessEntity.Models.Response
 {
-    public class ResponseCancelarReserva
+    public class ResponseCancelarTurno
     {
         public int Reserva_Id { get; set; }
         public string Estado { get; set; }

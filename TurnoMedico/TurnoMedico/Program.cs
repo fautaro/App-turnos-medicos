@@ -42,8 +42,16 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+
+app.MapControllerRoute(
+    name: "profesional",
+    pattern: "{profesional}", // El segmento después del dominio será el identificador del profesional
+    defaults: new { controller = "Home", action = "Index" }
+);
+
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}"
+);
 
 app.Run();

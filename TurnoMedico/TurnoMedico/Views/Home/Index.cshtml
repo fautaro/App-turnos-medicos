@@ -1,4 +1,10 @@
-﻿
+﻿@using BusinessEntity.Response
+@model ProfesionalResponse
+
+@{
+    ViewData["Title"] = $"Sacar turno con {Model.Titulo}";
+}
+
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
 <style>
     .fade-enter-active,
@@ -22,16 +28,25 @@
                             <div class="col-sm-12">
                                 <div class="form-group">
                                     <h4 class="information mt-4" style="text-align: center;margin-bottom:20px">
-                                        Lic. Lucia Nazarena Chang
+                                        @Model.Titulo
                                     </h4>
+                                    @if (Model.Imagen != null)
+                                    {
+                                        <div style="text-align:center">
+                                            <img src="@($"data:image/png;base64,{Convert.ToBase64String(Model.Imagen)}")" alt="Imagen" class="img-circle" style="width: 200px;" />
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div style="text-align:center">
+                                            <img src="~/img/blank.webp" class="img-circle" style="width: 200px;" />
+                                        </div>
+                                    }
 
-                                    <div style="text-align:center">
-                                        <img src="~/img/10.jpg" class="img-circle" style="width: 200px;" />
-                                    </div>
                                 </div>
                                 <div style="margin-top:17px">
                                     <p style="text-align:center">
-                                        Nutricionista UBA. Especialista en terapia nutricional orientada a patología crítica. Educación alimentaria nutricional. Nutrición pediátrica
+                                        @Model.Descripcion
                                     </p>
                                 </div>
                                 <hr />

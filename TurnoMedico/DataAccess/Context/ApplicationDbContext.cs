@@ -67,7 +67,12 @@ namespace DataAccess.Context
                 entity.Property(e => e.Alias).HasColumnName("Alias").HasMaxLength(15); // Propiedad para el campo Alias con límite de 15 caracteres
                 entity.Property(e => e.Profesion_Id).HasColumnName("Profesion_Id").IsRequired(); // Propiedad para el campo Profesion_Id
                 entity.Property(e => e.Usuario_Id).HasColumnName("Usuario_Id").IsRequired(); // Propiedad para el campo Usuario_Id
+                entity.Property(e => e.Activo).HasColumnName("Activo"); // Propiedad para el campo Activo
+                entity.Property(e => e.Titulo).HasColumnName("Titulo").HasMaxLength(100); // Propiedad para el campo Titulo con límite de 100 caracteres
                 entity.Property(e => e.Descripcion).HasColumnName("Descripcion").HasMaxLength(500); // Propiedad para el campo Descripcion con límite de 500 caracteres
+                entity.Property(e => e.Imagen).HasColumnName("Imagen"); // Propiedad para el campo Imagen (varbinary)
+
+
             });
 
 

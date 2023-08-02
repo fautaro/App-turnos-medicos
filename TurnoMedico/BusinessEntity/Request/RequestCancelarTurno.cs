@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace BusinessEntity.Models.Request
 {
-    public class RequestCancelarReserva
+    public class RequestCancelarTurno
     {
-        public int Reserva_Id { get; set; }
+        public int Turno_Id { get; set; }
         public string Token { get; set; }
 
     }

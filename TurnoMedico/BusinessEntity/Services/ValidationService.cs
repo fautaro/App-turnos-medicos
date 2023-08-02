@@ -1,4 +1,6 @@
 ﻿using BusinessEntity.Models.Request;
+using BusinessEntity.Response;
+using DataAccess.Models;
 using DataAccess.Services;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -16,11 +18,14 @@ namespace BusinessEntity.Services
 
         public async Task<bool> validateReserva(RequestDatosTurno turno)
         {
-            if (turno == null || turno.Fecha == null || turno.Hora == null || turno.Cliente == null || turno.Profesional == null || turno.Email == null) return false;
+            if (turno == null || turno.Fecha == null || turno.Hora == null || turno.Nombre == null || turno.Apellido == null || turno.Profesional == null || turno.Email == null) return false;
 
             DateTime FechaHora = DateTime.ParseExact($"{turno.Fecha} {turno.Hora}", "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
 
-           var TurnoExistente = await _dbWrapper.CheckTurno(FechaHora, turno.ProfesionalId);
+
+            // Comprobar si el turno ya existe
+
+            var TurnoExistente = await _dbWrapper.CheckTurno(FechaHora, turno.ProfesionalId);
 
             if (TurnoExistente != null) return false;
 
@@ -35,18 +40,40 @@ namespace BusinessEntity.Services
                 }
             }
 
+            //Compruebo que la fecha del turno sea mayor al momento actual donde se desea guardar el turno
+            if (FechaHora < DateTime.Now)
+            {
+                return false;
+            }
+
+            // Verificar si la Fecha y hora del turno es sábado o domingo
+            if (FechaHora.DayOfWeek == DayOfWeek.Saturday || FechaHora.DayOfWeek == DayOfWeek.Sunday)
+            {
+                return false;
+            }
+
+
+            // Verificar si los minutos son diferentes de 0 o 30
+            if (FechaHora.Minute % 30 != 0)
+            {
+                return false;
+            }
+
+
+            //El turno es correcto
             return true;
+
 
         }
 
 
-        public async Task<bool> ValidateCancelarReserva(RequestCancelarReserva turno)
+        public async Task<bool> ValidateCancelarReserva(RequestCancelarTurno turno)
         {
-            if (turno == null || turno.Token == null || turno.Reserva_Id == null) return false;
+            if (turno == null || turno.Token == null || turno.Turno_Id == null) return false;
 
 
-                var Token = await _dbWrapper.CheckToken(turno.Reserva_Id, turno.Token);
-                var Reserva = await _dbWrapper.CheckReservaId(turno.Reserva_Id, turno.Token);
+            var Token = await _dbWrapper.CheckToken(turno.Turno_Id, turno.Token);
+            var Reserva = await _dbWrapper.CheckReservaId(turno.Turno_Id, turno.Token);
 
 
             if (Token == null || Reserva == null) return false;
@@ -54,6 +81,26 @@ namespace BusinessEntity.Services
             if (Token.Equals(Reserva)) return true;
 
             return false;
+        }
+
+
+        public async Task<ProfesionalResponse> ValidateProfesional(string profesional)
+        {
+
+            ProfesionalResponse response = new ProfesionalResponse();
+            var Profesional = await _dbWrapper.GetProfesional(profesional);
+
+            if (Profesional == null || Profesional.Activo.Equals(false))
+            {
+                response.Activo = false;
+                response.Profesional_Id = null;
+            }
+
+            response.Titulo = Profesional.Titulo;
+            response.Descripcion = Profesional.Descripcion;
+            response.Profesional_Id = Profesional.Profesional_Id;
+
+            return response;
         }
 
     }

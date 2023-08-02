@@ -3,6 +3,7 @@ using BusinessEntity.Models.Response;
 using DataAccess.Models;
 using DataAccess.Services;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace BusinessEntity.Services
 {
@@ -21,12 +22,14 @@ namespace BusinessEntity.Services
 
                 if (await _validationService.validateReserva(datosTurno))
                 {
+                    DateTime FechaHora = DateTime.ParseExact($"{datosTurno.Fecha} {datosTurno.Hora}", "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
+
                     Turno turno = new Turno()
                     {
-                        Nombre = datosTurno.Cliente,
-                        Apellido = "Completar", //TODO: Pasar apellido desde la pantalla separado del nombre
+                        Nombre = datosTurno.Nombre,
+                        Apellido = datosTurno.Apellido,
                         Email = datosTurno.Email,
-                        FechaHora = Convert.ToDateTime(datosTurno.Fecha + datosTurno.Hora),
+                        FechaHora = FechaHora,
                         Profesional_Id = datosTurno.ProfesionalId,
                         Telefono = datosTurno.Telefono,
                         Activo = true,
@@ -41,11 +44,11 @@ namespace BusinessEntity.Services
                     response.Mensaje = "Turno guardado Correctamente";
                     response.TurnoConfirmado = new ResponseTurnoConfirmado()
                     {
-                        Cliente = datosTurno.Cliente, //TODO: Pasar apellido desde la pantalla separado del nombre
+                        Cliente = datosTurno.Nombre + datosTurno.Apellido, 
                         Email = datosTurno.Email,
                         Fecha = datosTurno.Fecha,
                         Hora = datosTurno.Hora,
-                        Profesional = datosTurno.Profesional, //TODO: Pasar Profesional_Id desde el controller, tomando en cuenta la url 
+                        Profesional = datosTurno.Profesional, 
                         Telefono = datosTurno.Telefono
                         
                     };
@@ -76,19 +79,19 @@ namespace BusinessEntity.Services
 
 
 
-        public async Task<ResponseCancelarReserva> CancelarReserva(RequestCancelarReserva turno)
+        public async Task<ResponseCancelarTurno> CancelarReserva(RequestCancelarTurno turno)
         {
             try
             {
-                ResponseCancelarReserva response = new ResponseCancelarReserva();
+                ResponseCancelarTurno response = new ResponseCancelarTurno();
 
                 if (await _validationService.ValidateCancelarReserva(turno))
                 {
-                    await _dbWrapper.CancelarTurno(turno.Reserva_Id);
+                    await _dbWrapper.CancelarTurno(turno.Turno_Id);
 
                     response.Success = true;
                     response.Estado = "Cancelada";
-                    response.Mensaje = $"La reserva {turno.Reserva_Id} ha sido cancelada correctamente";
+                    response.Mensaje = $"La reserva {turno.Turno_Id} ha sido cancelada correctamente";
 
 
                 }
@@ -103,7 +106,7 @@ namespace BusinessEntity.Services
             }
             catch (Exception ex)
             {
-                ResponseCancelarReserva response = new ResponseCancelarReserva();
+                ResponseCancelarTurno response = new ResponseCancelarTurno();
 
                 response.Success = true;
                 response.Mensaje = $"Hubo un error al cancelar la reserva";
@@ -111,5 +114,6 @@ namespace BusinessEntity.Services
             }
 
         }
+
     }
 }
