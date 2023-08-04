@@ -1,9 +1,11 @@
 ﻿@using BusinessEntity.Response
 @model ProfesionalResponse
 
-@{
+
+<title>Sacar turno con @Model.Titulo</title>
+@*@{
     ViewData["Title"] = $"Sacar turno con {Model.Titulo}";
-}
+}*@
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
 <style>
@@ -63,7 +65,7 @@
                 </div>
             </div>
         </div>
-        @* Pag 1*@
+        @* Pag 1 - Botones de selección de día y horario*@
         <div class="page-one" id="page-one" v-if="pag == 1">
             <div class="container mt-5 mb-5 d-flex justify-content-center">
                 <div class="card px-1 py-4">
@@ -131,7 +133,7 @@
                         <div class="row">
                             <div class="col-sm-12">
                                 <template v-if="pag == 2">
-                                    <Datepicker style="justify-content:center" v-model="fechaSeleccionada" model-type="dd/MM/yyyy" inline locale="es" :min-date="new Date()" :enable-time-picker="false" auto-apply />
+                                    <Datepicker style="justify-content:center" v-model="fechaSeleccionada" model-type="dd/MM/yyyy" inline locale="es" :min-date="new Date()" :enable-time-picker="false" auto-apply :disabled-dates="fechasBloqueadas" :disabled-week-days="[6, 0]" />
                                 </template>
                             </div>
                         </div>
@@ -141,7 +143,7 @@
                         </div>
                         <div class="row">
                             <div class="d-grid gap-2 col-12 mx-auto">
-                                <button class="btn btn-primary btn-block confirm-button" v-on:click="nextStep()" id="btnSiguiente">Siguiente</button>
+                                <button class="btn btn-primary btn-block confirm-button" v-on:click="getHorasDisponibles()" id="btnSiguiente">Siguiente</button>
                             </div>
 
                         </div>
@@ -216,7 +218,7 @@
                         <div class="col-sm-12">
                             <div class="form-group" style="margin-top:10px">
                                 <label>Profesional:</label>
-                                <input class="form-control" disabled type="text" value=" Lic. Lucia Nazarena Chang">
+                                <input class="form-control" disabled type="text" value="@Model.Titulo">
                             </div>
                         </div>
                         <br />
@@ -225,8 +227,16 @@
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="form-group">
-                                    <label>Nombre y Apellido:</label>
-                                    <input class="form-control" type="text" v-model="pacNombreApellido">
+                                    <label>Nombre:</label>
+                                    <input class="form-control" type="text" v-model="pacNombre">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label>Apellido:</label>
+                                    <input class="form-control" type="text" v-model="pacApellido">
                                 </div>
                             </div>
                         </div>
@@ -250,7 +260,7 @@
                             <small class="agree-text"></small>
                             <a href="#" class="terms"></a>
                         </div>
-                        <div v-if="pag == 4 && showError && (pacNombreApellido == '' || pacTelefono == '' || pacEmail == '' || fechaSeleccionada == '' || horaSeleccionada == '')">
+                        <div v-if="pag == 4 && showError && (pacNombre == '' || pacApellido == '' || pacTelefono == '' || pacEmail == '' || fechaSeleccionada == '' || horaSeleccionada == '')">
                             <p style="text-align:center">Por favor, complete todos los campos</p>
                         </div>
                         <div class="d-grid gap-2 col-12 mx-auto">
@@ -385,15 +395,21 @@
                 //Fecha y Hora seleccionada
                 fechaSeleccionada: "",
                 horaSeleccionada: "",
+                //Fechas y horas bloqueadas
+                fechasBloqueadas: [], //"2023/08/15"
+                horasDisponibles: [], //"09:00"
                 //Variable para mostrar error
                 showError: false,
                 //Datos del paciente
-                pacNombreApellido: "",
+                pacNombre: "",
+                pacApellido: "",
                 pacTelefono: "",
                 pacEmail: "",
                 //Response Ajax
                 reservaSuccess: false,
                 reservaConfirmada: {},
+
+
             }
         },
         computed: {
@@ -410,6 +426,32 @@
             Datepicker: VueDatePicker
         },
         methods: {
+
+            getHorasDisponibles() {
+
+                const dia = {
+                    dia: this.fechaSeleccionada
+                }
+                fetch('@Url.Action("getHorasDisponibles", "Home")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(dia),
+                })
+                    .then(response => response.json())
+                    .then(responseData => {
+                        if (responseData.success) {
+                            this.horasDisponibles = responseData.horasDisponibles;
+                        } else {
+                            this.pag = 6; //Pag de error
+                        }
+                    })
+                    .catch(error => {
+                        this.pag = 6; //Pag de error
+                        console.error('Error al enviar la solicitud:', error);
+                    });
+            },
             nextStep() {
                 if (this.fechaSeleccionada == "") {
                     this.showError = true;
@@ -449,22 +491,22 @@
                 }
             },
             btnConfirmarTurno() {
-                if (this.pacNombreApellido == "" || this.pacTelefono == "" || this.pacEmail == "" || this.fechaSeleccionada == "" || this.horaSeleccionada == "") {
+                if (this.pacNombre == "" || this.pacApellido == "" || this.pacTelefono == "" || this.pacEmail == "" || this.fechaSeleccionada == "" || this.horaSeleccionada == "") {
                     this.showError = true;
                 } else {
                     this.pag = 5;
 
                     //Obj: turno
                     const turno = {
-                        Cliente: this.pacNombreApellido,
+                        Nombre: this.pacNombre,
+                        Apellido: this.pacApellido,
                         Telefono: this.pacTelefono.toString(),
                         Email: this.pacEmail,
                         Fecha: this.fechaSeleccionada,
                         Hora: this.horaSeleccionada,
-                        Profesional: 'Lucia Chang'
+                        Profesional: '@Model.Titulo',
+                        ProfesionalId: @Model.Profesional_Id
                     }
-
-                    console.log(JSON.stringify(turno))
 
                     fetch('@Url.Action("ConfirmarTurno", "Home")', {
                         method: 'POST',
@@ -475,7 +517,6 @@
                     })
                         .then(response => response.json())
                         .then(responseData => {
-                            console.log(responseData)
                             if (responseData.success) {
                                 this.reservaSuccess = true;
                                 this.reservaConfirmada = responseData.turnoConfirmado
@@ -483,7 +524,6 @@
                             this.pag = 6;
 
                             setTimeout(() => {
-                                console.log(this.reservaConfirmada)
                                 this.pag = 7;
                             }, 3000)
 

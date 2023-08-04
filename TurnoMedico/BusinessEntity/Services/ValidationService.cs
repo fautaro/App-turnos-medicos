@@ -14,11 +14,16 @@ namespace BusinessEntity.Services
 {
     public class ValidationService
     {
-        private readonly DbWrapper _dbWrapper;
+        private DbWrapper _dbWrapper;
+
+        public ValidationService(DbWrapper dbWrapper)
+        {
+            _dbWrapper = dbWrapper;
+        }
 
         public async Task<bool> validateReserva(RequestDatosTurno turno)
         {
-            if (turno == null || turno.Fecha == null || turno.Hora == null || turno.Nombre == null || turno.Apellido == null || turno.Profesional == null || turno.Email == null) return false;
+            if (turno == null || turno.Fecha == null || turno.Hora == null || turno.Nombre == null || turno.Apellido == null || turno.ProfesionalId == null || turno.Email == null) return false;
 
             DateTime FechaHora = DateTime.ParseExact($"{turno.Fecha} {turno.Hora}", "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
 
@@ -94,11 +99,16 @@ namespace BusinessEntity.Services
             {
                 response.Activo = false;
                 response.Profesional_Id = null;
+                return response;
+
             }
 
             response.Titulo = Profesional.Titulo;
             response.Descripcion = Profesional.Descripcion;
             response.Profesional_Id = Profesional.Profesional_Id;
+            response.Activo = Profesional.Activo == true ? true : false;
+            response.Imagen = Profesional.Imagen;
+            response.Profesional = $"{Profesional.Nombre} {Profesional.Apellido}";
 
             return response;
         }

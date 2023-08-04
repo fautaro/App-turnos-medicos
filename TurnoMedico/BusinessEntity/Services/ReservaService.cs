@@ -9,10 +9,18 @@ namespace BusinessEntity.Services
 {
     public class ReservaService
     {
-        private readonly DbWrapper _dbWrapper;
-        private readonly ValidationService _validationService;
-        private readonly TokenService _tokenService;
+        private DbWrapper _dbWrapper;
+        private ValidationService _validationService;
+        private TokenService _tokenService;
 
+
+        public ReservaService(DbWrapper dbWrapper, ValidationService validationService, TokenService tokenService)
+        {
+            _dbWrapper = dbWrapper;
+            _validationService = validationService;
+            _tokenService = tokenService;
+
+        }
 
         public async Task<ResponseDatosTurno> GuardarReserva(RequestDatosTurno datosTurno)
         {
@@ -36,21 +44,21 @@ namespace BusinessEntity.Services
                         Token = _tokenService.GenerateGuidToken()
 
                     };
-                    var TurnoGeneradoDB = _dbWrapper.AddTurno(turno);
+                    var TurnoGeneradoDB = await _dbWrapper.AddTurno(turno);
 
                     response.Success = true;
-                    response.Reserva_Id = TurnoGeneradoDB.Result.Turno_Id;
+                    response.Reserva_Id = TurnoGeneradoDB.Turno_Id;
                     response.Estado = "C";
                     response.Mensaje = "Turno guardado Correctamente";
                     response.TurnoConfirmado = new ResponseTurnoConfirmado()
                     {
-                        Cliente = datosTurno.Nombre + datosTurno.Apellido, 
+                        Cliente = $"{datosTurno.Nombre} {datosTurno.Apellido}",
                         Email = datosTurno.Email,
                         Fecha = datosTurno.Fecha,
                         Hora = datosTurno.Hora,
-                        Profesional = datosTurno.Profesional, 
+                        Profesional = datosTurno.Profesional,
                         Telefono = datosTurno.Telefono
-                        
+
                     };
 
                 }

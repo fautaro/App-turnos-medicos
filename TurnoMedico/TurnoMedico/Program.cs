@@ -2,6 +2,7 @@ using BusinessEntity.Services;
 using DataAccess.Context;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
+using DataAccess.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +11,6 @@ builder.Services.AddControllersWithViews().AddJsonOptions(options =>
      {
          options.JsonSerializerOptions.PropertyNameCaseInsensitive = true; // Si es necesario
      });
-
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -23,6 +23,8 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddTransient<ReservaService, ReservaService>();
 builder.Services.AddTransient<ValidationService, ValidationService>();
+builder.Services.AddTransient<TokenService, TokenService>();
+builder.Services.AddTransient<DbWrapper, DbWrapper>();
 
 var app = builder.Build();
 

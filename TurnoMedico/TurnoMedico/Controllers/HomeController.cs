@@ -46,7 +46,7 @@ namespace TurnoMedico.Controllers
         {
             try
             {
-                await Task.Delay(4000);
+                //await Task.Delay(4000);
 
                 var Response = await _reservaService.GuardarReserva(turno);
 
@@ -67,7 +67,7 @@ namespace TurnoMedico.Controllers
         {
             try
             {
-                await Task.Delay(4000);
+                //await Task.Delay(4000);
 
                 var Response = await _reservaService.CancelarReserva(turno);
 
