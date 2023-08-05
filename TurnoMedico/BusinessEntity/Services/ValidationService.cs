@@ -1,4 +1,5 @@
 ﻿using BusinessEntity.Models.Request;
+using BusinessEntity.Request;
 using BusinessEntity.Response;
 using DataAccess.Models;
 using DataAccess.Services;
@@ -21,6 +22,23 @@ namespace BusinessEntity.Services
             _dbWrapper = dbWrapper;
         }
 
+
+        //Método para convertir los campos FechaDesde y FechaHasta de la base de datos en un array de fechas
+        public static List<string> ConvertToArrayFechas(DateTime desde, DateTime hasta)
+        {
+            List<string> resultado = new List<string>();
+            DateTime fechaActual = desde;
+
+            while (fechaActual <= hasta)
+            {
+                resultado.Add(fechaActual.ToString("yyyy/MM/dd"));
+                fechaActual = fechaActual.AddDays(1);
+            }
+            return resultado;
+        }
+
+
+        //Método para validar si el turno que se intenta guardar es válida
         public async Task<bool> validateReserva(RequestDatosTurno turno)
         {
             if (turno == null || turno.Fecha == null || turno.Hora == null || turno.Nombre == null || turno.Apellido == null || turno.ProfesionalId == null || turno.Email == null) return false;
@@ -71,7 +89,7 @@ namespace BusinessEntity.Services
 
         }
 
-
+        //Método para validar el turno que se intenta cancelar
         public async Task<bool> ValidateCancelarReserva(RequestCancelarTurno turno)
         {
             if (turno == null || turno.Token == null || turno.Turno_Id == null) return false;
@@ -89,6 +107,8 @@ namespace BusinessEntity.Services
         }
 
 
+
+        //Método para validar que el profesional recibido por querystring turnos.com/profesional esté activo y sea válido
         public async Task<ProfesionalResponse> ValidateProfesional(string profesional)
         {
 

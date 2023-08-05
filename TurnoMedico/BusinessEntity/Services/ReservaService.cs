@@ -1,5 +1,7 @@
 ﻿using BusinessEntity.Models.Request;
 using BusinessEntity.Models.Response;
+using BusinessEntity.Request;
+using BusinessEntity.Response;
 using DataAccess.Models;
 using DataAccess.Services;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +22,69 @@ namespace BusinessEntity.Services
             _validationService = validationService;
             _tokenService = tokenService;
 
+        }
+
+        public async Task<ResponseGetDiasBloqueados> GetDiasBloqueados(RequestGetDiasBloqueados request)
+        {
+
+            try
+            {
+                var agendaBloqueada = _dbWrapper.GetAgendaBloqueada(request.Profesional_Id);
+
+
+                ResponseGetDiasBloqueados response = new ResponseGetDiasBloqueados()
+                {
+                    Success = true,
+                    DiasBloqueados = new List<string> { "2023/08/15", "2023/08/16", "2023/08/23" }
+                };
+
+                response.DiasBloqueados.Sort();
+
+                return response;
+
+            }
+            catch (Exception ex)
+            {
+                ResponseGetDiasBloqueados response = new ResponseGetDiasBloqueados()
+                {
+                    Success = false,
+                    //HorasDisponibles = null
+                };
+                return response;
+            }
+
+
+            //return new List<string> { "15:00", "16:00", "17:00", "11:00", "10:00" };
+        }
+
+        public async Task<ResponseGetHorasDisponibles> GetHorasDisponibles(RequestGetHorasDisponibles request)
+        {
+
+            try
+            {
+                ResponseGetHorasDisponibles response = new ResponseGetHorasDisponibles()
+                {
+                    Success = true,
+                    HorasDisponibles = new List<string> { "15:00", "16:00", "17:00", "11:00", "10:00" }
+                };
+
+                response.HorasDisponibles.Sort();
+
+                return response;
+
+            }
+            catch (Exception ex)
+            {
+                ResponseGetHorasDisponibles response = new ResponseGetHorasDisponibles()
+                {
+                    Success = false,
+                    HorasDisponibles = null
+                };
+                return response;
+            }
+
+
+            //return new List<string> { "15:00", "16:00", "17:00", "11:00", "10:00" };
         }
 
         public async Task<ResponseDatosTurno> GuardarReserva(RequestDatosTurno datosTurno)

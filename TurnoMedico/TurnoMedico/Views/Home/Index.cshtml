@@ -76,14 +76,13 @@
                                 <div class="form-group">
                                     <div v-if="pag == 1 && fechaSeleccionada != ''">
                                         <div class="input-group">
-                                            <input type="text" disabled class="form-control" v-on:click="setDia()" v-model="fechaSeleccionada" style="text-align:left">
-                                            <button type="button" class="btn btn-success btn-edit" v-on:click="setDia(true)"><i class="fa-solid fa-pen-to-square" style="color:white"></i></button>
+                                            <input type="text" disabled class="form-control" v-on:click="getDiasBloqueados(true)" v-model="fechaSeleccionada" style="text-align:left">
+                                            <button type="button" class="btn btn-success btn-edit" v-on:click="getDiasBloqueados(true)"><i class="fa-solid fa-pen-to-square" style="color:white"></i></button>
                                         </div>
 
                                     </div>
                                     <div v-else>
-                                        <input type="button" class="form-control" placeholder="Día" v-on:click="setDia(false)" value="Día" style="text-align:left">
-
+                                        <input type="button" class="form-control" placeholder="Día" v-on:click="getDiasBloqueados(false)" value="Día" style="text-align:left">
                                     </div>
                                 </div>
                             </div>
@@ -161,29 +160,40 @@
                                 <button type="button" class="btn-close" aria-label="Close" v-on:click="goFirstPage()"></button>
                             </div>
                         </div>
-                        <h5 class="information mt-4">Por favor, seleccione un horario</h5>
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <h6 class="information mt-4">Mañana</h6>
-                                <div class="form-group">
-                                    <button type="button" class="form-control" v-on:click="selectHora('09:00')"> 09:00 </button>
-                                    <button type="button" class="form-control" v-on:click="selectHora('10:00')"> 10:00 </button>
-                                    <button type="button" class="form-control" v-on:click="selectHora('11:00')"> 11:00 </button>
-                                    <button type="button" class="form-control" v-on:click="selectHora('12:00')"> 12:00 </button>
+                        <div>
+                            <h5 class="information mt-4">Por favor, seleccione un horario</h5>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    @*                                    <h6 class="information mt-4">Mañana</h6>
+                                    *@                                    <div class="form-group">
+                                        <button v-for="hora in horasDisponibles"
+                                                @* v-if="isHorarioManana(hora)"
+                                                *@ :key="hora"
+                                                type="button"
+                                                class="form-control"
+                                                v-on:click="selectHora(hora)">
+                                            {{ hora }}
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
+                            @*                            <div class="row">
                             <div class="col-sm-12">
-                                <h6 class="information mt-4">Tarde</h6>
-                                <div class="form-group">
-                                    <button type="button" class="form-control" v-on:click="selectHora('15:00')"> 15:00 </button>
-                                    <button type="button" class="form-control" v-on:click="selectHora('16:00')"> 16:00 </button>
-                                    <button type="button" class="form-control" v-on:click="selectHora('17:00')"> 17:00 </button>
-                                    <button type="button" class="form-control" v-on:click="selectHora('18:00')"> 18:00 </button>
-                                </div>
+                            <h6 class="information mt-4">Tarde</h6>
+                            <div class="form-group">
+                            <button v-for="hora in horasDisponibles"
+                            v-if="!isHorarioManana(hora)"
+                            :key="hora"
+                            type="button"
+                            class="form-control"
+                            v-on:click="selectHora(hora)">
+                            {{ hora }}
+                            </button>
                             </div>
+                            </div>
+                            </div>*@
                         </div>
+
                         <br />
                     </div>
                 </div>
@@ -426,23 +436,64 @@
             Datepicker: VueDatePicker
         },
         methods: {
+            isHorarioManana(hora) {
+                if (!hora) {
+                    return false; // O retorna lo que sea más adecuado para tu caso
+                }
 
+                const horaNumerica = parseInt(hora.split(":")[0]);
+                return horaNumerica < 13;
+            },
+            getDiasBloqueados(edit) {
+                const self = this; // Almacenar la referencia de "this"
+
+                const Profesional = {
+                    Profesional_Id: '@Model.Profesional_Id'
+                }
+
+                fetch('@Url.Action("getDiasBloqueados", "Home")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(Profesional),
+                })
+                    .then(response => response.json())
+                    .then(responseData => {
+                        if (responseData.success) {
+                            this.fechasBloqueadas = responseData.diasBloqueados;
+                            if (edit) {
+                                this.setDia(true)
+                            } else {
+                                this.setDia(false)
+
+                            }
+                        } else {
+                            this.pag = 6; //Pag de error
+                        }
+                    })
+                    .catch(error => {
+                        this.pag = 6; //Pag de error
+                        console.error('Error al enviar la solicitud:', error);
+                    });
+            },
             getHorasDisponibles() {
 
-                const dia = {
-                    dia: this.fechaSeleccionada
+                const Fecha = {
+                    Fecha: this.fechaSeleccionada
                 }
                 fetch('@Url.Action("getHorasDisponibles", "Home")', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(dia),
+                    body: JSON.stringify(Fecha),
                 })
                     .then(response => response.json())
                     .then(responseData => {
                         if (responseData.success) {
                             this.horasDisponibles = responseData.horasDisponibles;
+                            this.nextStep();
                         } else {
                             this.pag = 6; //Pag de error
                         }
@@ -506,7 +557,7 @@
                         Hora: this.horaSeleccionada,
                         Profesional: '@Model.Titulo',
                         ProfesionalId: @Model.Profesional_Id
-                    }
+                                }
 
                     fetch('@Url.Action("ConfirmarTurno", "Home")', {
                         method: 'POST',

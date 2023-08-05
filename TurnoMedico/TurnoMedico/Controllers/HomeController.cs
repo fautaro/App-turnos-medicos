@@ -1,5 +1,7 @@
 ﻿using BusinessEntity.Models.Request;
 using BusinessEntity.Models.Response;
+using BusinessEntity.Request;
+using BusinessEntity.Response;
 using BusinessEntity.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -38,6 +40,44 @@ namespace TurnoMedico.Controllers
             else
             {
                 return View("NotFound");
+            }
+        }
+
+
+        [HttpPost]
+        public async Task<ResponseGetHorasDisponibles> getHorasDisponibles([FromBody] RequestGetHorasDisponibles Fecha)
+        {
+            try
+            {
+                var Response = await _reservaService.GetHorasDisponibles(Fecha);
+
+                return Response;
+
+
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+
+
+        [HttpPost]
+        public async Task<ResponseGetDiasBloqueados> getDiasBloqueados([FromBody] RequestGetDiasBloqueados request)
+        {
+            try
+            {
+                var Response = await _reservaService.GetDiasBloqueados(request);
+
+                return Response;
+
+
+            }
+            catch (Exception ex)
+            {
+
+                throw;
             }
         }
 
