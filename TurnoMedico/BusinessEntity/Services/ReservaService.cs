@@ -35,9 +35,11 @@ namespace BusinessEntity.Services
 
                 if (agendaBloqueada != null)
                 {
+                    response.DiasBloqueados = new List<string>();
                     foreach (var rangoBloqueado in agendaBloqueada)
                     {
-                        response.DiasBloqueados.AddRange(await _validationService.ConvertToArrayFechas(rangoBloqueado.FechaDesde, rangoBloqueado.FechaHasta));
+                        var DiasBloqueados = await _validationService.ConvertToArrayFechas(rangoBloqueado.FechaDesde, rangoBloqueado.FechaHasta);
+                        response.DiasBloqueados.AddRange(DiasBloqueados);
 
                     }
                 }

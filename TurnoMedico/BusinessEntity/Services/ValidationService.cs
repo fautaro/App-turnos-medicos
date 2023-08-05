@@ -158,7 +158,7 @@ namespace BusinessEntity.Services
 
             foreach (var fecha in turnosPorDia.Select(grupo => grupo.Key))
             {
-                var todosLosHorariosReservados = true;
+                var todosLosHorariosReservados = false;
 
                 var horariosDelDia = HorariosPermitidos.Select(horario => horario.Hora);
 
@@ -171,7 +171,7 @@ namespace BusinessEntity.Services
                     if (!horariosDelDia.Contains(horaReservada))
                     {
                         // Si hay algún horario no reservado, entonces no está completo
-                        todosLosHorariosReservados = false;
+                        todosLosHorariosReservados = true;
                         break;
                     }
                 }
