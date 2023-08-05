@@ -16,6 +16,8 @@ namespace DataAccess.Context
         public DbSet<Profesional> Profesional { get; set; }
         public DbSet<Turno> Turno { get; set; }
         public DbSet<AgendaBloqueada> AgendaBloqueada { get; set; }
+        public DbSet<Horario> Horario { get; set; }
+
 
 
 
@@ -86,6 +88,16 @@ namespace DataAccess.Context
                 entity.Property(e => e.FechaHasta).HasColumnName("FechaHasta").IsRequired(); // Propiedad para el campo FechaHasta
                 entity.Property(e => e.Activo).HasColumnName("Activo").IsRequired(); // Propiedad para el campo Activo
             });
+
+            modelBuilder.Entity<Horario>(entity =>
+            {
+                entity.ToTable("Horario"); // Nombre de la tabla en la base de datos
+                entity.HasKey(e => e.Horario_Id); // Clave primaria
+                entity.Property(e => e.Horario_Id).HasColumnName("Horario_Id"); // Mapeo de propiedad
+                entity.Property(e => e.Profesional_Id).HasColumnName("Profesional_Id"); // Mapeo de propiedad
+                entity.Property(e => e.Hora).HasColumnName("Hora");
+            });
+
         }
     }
 }

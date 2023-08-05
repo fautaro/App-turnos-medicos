@@ -451,7 +451,7 @@
                     Profesional_Id: '@Model.Profesional_Id'
                 }
 
-                fetch('@Url.Action("getDiasBloqueados", "Home")', {
+                fetch('@Url.Action("GetDiasBloqueados", "Home")', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -479,10 +479,12 @@
             },
             getHorasDisponibles() {
 
-                const Fecha = {
+                const request = {
+                    Profesional_Id: @Model.Profesional_Id,
                     Fecha: this.fechaSeleccionada
                 }
-                fetch('@Url.Action("getHorasDisponibles", "Home")', {
+
+                fetch('@Url.Action("GetHorasDisponibles", "Home")', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

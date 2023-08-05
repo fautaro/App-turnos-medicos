@@ -45,11 +45,11 @@ namespace TurnoMedico.Controllers
 
 
         [HttpPost]
-        public async Task<ResponseGetHorasDisponibles> getHorasDisponibles([FromBody] RequestGetHorasDisponibles Fecha)
+        public async Task<ResponseGetHorasDisponibles> GetHorasDisponibles([FromBody] RequestGetHorasDisponibles request)
         {
             try
             {
-                var Response = await _reservaService.GetHorasDisponibles(Fecha);
+                var Response = await _reservaService.GetHorasDisponibles(request);
 
                 return Response;
 
@@ -64,14 +64,13 @@ namespace TurnoMedico.Controllers
 
 
         [HttpPost]
-        public async Task<ResponseGetDiasBloqueados> getDiasBloqueados([FromBody] RequestGetDiasBloqueados request)
+        public async Task<ResponseGetDiasBloqueados> GetDiasBloqueados([FromBody] RequestGetDiasBloqueados request)
         {
             try
             {
                 var Response = await _reservaService.GetDiasBloqueados(request);
 
                 return Response;
-
 
             }
             catch (Exception ex)
@@ -134,20 +133,3 @@ namespace TurnoMedico.Controllers
         }
     }
 }
-
-
-//var response = new ResponseDatosTurno()
-//{
-//    Reserva_Id = 100,
-//    Estado = "C",
-//    Success = true,
-//    TurnoConfirmado = new ResponseTurnoConfirmado()
-//    {
-//        Cliente = turno.Nombre + turno.Apellido,
-//        Telefono = turno.Telefono,
-//        Email = turno.Email,
-//        Fecha = turno.Fecha,
-//        Hora = turno.Hora,
-//        Profesional = turno.Profesional
-//    }
-//};

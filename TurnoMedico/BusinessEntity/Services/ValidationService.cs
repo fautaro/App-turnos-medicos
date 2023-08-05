@@ -23,21 +23,8 @@ namespace BusinessEntity.Services
         }
 
 
-        //Método para convertir los campos FechaDesde y FechaHasta de la base de datos en un array de fechas
-        public static List<string> ConvertToArrayFechas(DateTime desde, DateTime hasta)
-        {
-            List<string> resultado = new List<string>();
-            DateTime fechaActual = desde;
 
-            while (fechaActual <= hasta)
-            {
-                resultado.Add(fechaActual.ToString("yyyy/MM/dd"));
-                fechaActual = fechaActual.AddDays(1);
-            }
-            return resultado;
-        }
-
-
+        #region Guardar Turno
         //Método para validar si el turno que se intenta guardar es válida
         public async Task<bool> validateReserva(RequestDatosTurno turno)
         {
@@ -88,7 +75,10 @@ namespace BusinessEntity.Services
 
 
         }
+        #endregion Guardar Turno
 
+
+        #region Cancelar Turno
         //Método para validar el turno que se intenta cancelar
         public async Task<bool> ValidateCancelarReserva(RequestCancelarTurno turno)
         {
@@ -105,9 +95,11 @@ namespace BusinessEntity.Services
 
             return false;
         }
+        #endregion Cancelar Turno
 
 
 
+        #region Metodos Load Aplicación
         //Método para validar que el profesional recibido por querystring turnos.com/profesional esté activo y sea válido
         public async Task<ProfesionalResponse> ValidateProfesional(string profesional)
         {
@@ -132,6 +124,97 @@ namespace BusinessEntity.Services
 
             return response;
         }
+
+
+        //Método para convertir los campos FechaDesde y FechaHasta de la base de datos en un array de fechas
+        public async Task<List<string>> ConvertToArrayFechas(DateTime desde, DateTime hasta)
+        {
+            List<string> resultado = new List<string>();
+            DateTime fechaActual = desde;
+
+            while (fechaActual <= hasta)
+            {
+                resultado.Add(fechaActual.ToString("yyyy/MM/dd"));
+                fechaActual = fechaActual.AddDays(1);
+            }
+
+            return resultado;
+        }
+
+
+        //Método para validar los dias completos segun los turnos cargados. Si un prof. trabaja 2 horarios por dia, y dichos turnos estan completos, entonces el dia esta completo
+        public async Task<List<string>> GetDiasTurnosCompletos(int profesional_Id)
+        {
+            //Get TurnosReservados y HorariosPermitidos
+            var TurnosReservados = await _dbWrapper.GetTurnosReservados(profesional_Id);
+            var HorariosPermitidos = await _dbWrapper.GetHorariosPermitidos(profesional_Id);
+
+
+
+            //Lógica para generar los días bloqueados
+            var ListaDiasBloqueados = new List<string>();
+
+            var turnosPorDia = TurnosReservados.GroupBy(turno => turno.FechaHora.Date);
+
+            foreach (var fecha in turnosPorDia.Select(grupo => grupo.Key))
+            {
+                var todosLosHorariosReservados = true;
+
+                var horariosDelDia = HorariosPermitidos.Select(horario => horario.Hora);
+
+                foreach (var horarioReservado in turnosPorDia.First(grupo => grupo.Key == fecha))
+                {
+                    // Obtener solo la hora del turno reservado
+                    var horaReservada = horarioReservado.FechaHora.TimeOfDay;
+
+                    // Verificar si la hora del turno reservado está en los horarios permitidos para el día
+                    if (!horariosDelDia.Contains(horaReservada))
+                    {
+                        // Si hay algún horario no reservado, entonces no está completo
+                        todosLosHorariosReservados = false;
+                        break;
+                    }
+                }
+
+                if (todosLosHorariosReservados)
+                {
+                    ListaDiasBloqueados.Add(fecha.ToString("yyyy/MM/dd"));
+                }
+            }
+            return ListaDiasBloqueados;
+        }
+
+
+        public async Task<List<string>> GetHorasDisponibles(RequestGetHorasDisponibles request)
+        {
+
+            //Convierto el string en pantalla a un objeto DateTime
+            DateTime fechaBuscada = DateTime.ParseExact(request.Fecha, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+
+            //Horarios que trabaja el profesional todos los días
+            var GetHorariosPermitidos = await _dbWrapper.GetHorariosPermitidos(request.Profesional_Id);
+            var GetHorariosReservados = await _dbWrapper.GetTurnosReservados(request.Profesional_Id);
+
+            // Obtener los horarios reservados del día en formato TimeSpan
+            var horariosReservadosDelDia = GetHorariosReservados
+                .Where(turno => turno.FechaHora.Date == fechaBuscada.Date)
+                .Select(turno => turno.FechaHora.TimeOfDay)
+                .ToList();
+
+            // Obtener los horarios disponibles (horarios permitidos que no están reservados)
+            var horariosDisponibles = GetHorariosPermitidos
+                .Where(horario => !horariosReservadosDelDia.Contains(horario.Hora))
+                .Select(horario => horario.Hora.ToString(@"hh\:mm"))
+                .ToList();
+
+            return horariosDisponibles;
+        }
+
+
+
+
+        #endregion Metodos Load Aplicación
+
 
     }
 }

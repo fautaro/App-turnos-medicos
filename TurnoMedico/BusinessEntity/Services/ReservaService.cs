@@ -5,6 +5,7 @@ using BusinessEntity.Response;
 using DataAccess.Models;
 using DataAccess.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using System.Globalization;
 
 namespace BusinessEntity.Services
@@ -26,48 +27,52 @@ namespace BusinessEntity.Services
 
         public async Task<ResponseGetDiasBloqueados> GetDiasBloqueados(RequestGetDiasBloqueados request)
         {
+            ResponseGetDiasBloqueados response = new ResponseGetDiasBloqueados();
 
             try
             {
-                var agendaBloqueada = _dbWrapper.GetAgendaBloqueada(request.Profesional_Id);
+                var agendaBloqueada = _dbWrapper.GetAgendaBloqueada(request.Profesional_Id).Result;
 
-
-                ResponseGetDiasBloqueados response = new ResponseGetDiasBloqueados()
+                if (agendaBloqueada != null)
                 {
-                    Success = true,
-                    DiasBloqueados = new List<string> { "2023/08/15", "2023/08/16", "2023/08/23" }
-                };
+                    foreach (var rangoBloqueado in agendaBloqueada)
+                    {
+                        response.DiasBloqueados.AddRange(await _validationService.ConvertToArrayFechas(rangoBloqueado.FechaDesde, rangoBloqueado.FechaHasta));
 
+                    }
+                }
+
+                //Se obtienen los días que tienen todos los turnos completos y se agregan a la lista de días bloqueados
+                response.DiasBloqueados.AddRange(await _validationService.GetDiasTurnosCompletos(request.Profesional_Id));
+
+
+                //Ordeno lista de días bloqueados
                 response.DiasBloqueados.Sort();
+                response.Success = true;
 
                 return response;
 
             }
             catch (Exception ex)
             {
-                ResponseGetDiasBloqueados response = new ResponseGetDiasBloqueados()
-                {
-                    Success = false,
-                    //HorasDisponibles = null
-                };
+                response.Success = false;
+                response.DiasBloqueados = null;
+
                 return response;
             }
-
-
-            //return new List<string> { "15:00", "16:00", "17:00", "11:00", "10:00" };
         }
+
 
         public async Task<ResponseGetHorasDisponibles> GetHorasDisponibles(RequestGetHorasDisponibles request)
         {
+            ResponseGetHorasDisponibles response = new ResponseGetHorasDisponibles();
 
             try
             {
-                ResponseGetHorasDisponibles response = new ResponseGetHorasDisponibles()
-                {
-                    Success = true,
-                    HorasDisponibles = new List<string> { "15:00", "16:00", "17:00", "11:00", "10:00" }
-                };
+                var GetHorariosDisponibles = await _validationService.GetHorasDisponibles(request);
 
+                response.Success = true;
+                response.HorasDisponibles = GetHorariosDisponibles;
                 response.HorasDisponibles.Sort();
 
                 return response;
@@ -75,16 +80,11 @@ namespace BusinessEntity.Services
             }
             catch (Exception ex)
             {
-                ResponseGetHorasDisponibles response = new ResponseGetHorasDisponibles()
-                {
-                    Success = false,
-                    HorasDisponibles = null
-                };
+                response.Success = false;
+                response.HorasDisponibles = null;
+
                 return response;
             }
-
-
-            //return new List<string> { "15:00", "16:00", "17:00", "11:00", "10:00" };
         }
 
         public async Task<ResponseDatosTurno> GuardarReserva(RequestDatosTurno datosTurno)
@@ -132,8 +132,6 @@ namespace BusinessEntity.Services
                     response.Success = false;
                     response.Estado = "E";
                     response.Mensaje = "Ocurrió un error al guardar el turno";
-
-
                 }
                 return response;
             }
@@ -150,8 +148,6 @@ namespace BusinessEntity.Services
 
         }
 
-
-
         public async Task<ResponseCancelarTurno> CancelarReserva(RequestCancelarTurno turno)
         {
             try
@@ -165,8 +161,6 @@ namespace BusinessEntity.Services
                     response.Success = true;
                     response.Estado = "Cancelada";
                     response.Mensaje = $"La reserva {turno.Turno_Id} ha sido cancelada correctamente";
-
-
                 }
                 else
                 {
@@ -174,7 +168,6 @@ namespace BusinessEntity.Services
                     response.Mensaje = $"Hubo un error al validar la reserva";
 
                 }
-
                 return response;
             }
             catch (Exception ex)
@@ -185,8 +178,6 @@ namespace BusinessEntity.Services
                 response.Mensaje = $"Hubo un error al cancelar la reserva";
                 return response;
             }
-
         }
-
     }
 }

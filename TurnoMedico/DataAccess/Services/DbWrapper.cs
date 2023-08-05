@@ -13,14 +13,13 @@ namespace DataAccess.Services
     public class DbWrapper
     {
         private readonly ApplicationDbContext _dbContext;
+        private readonly DateTime fechaActual = DateTime.Now;
+
 
         public DbWrapper(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
         }
-
-
-
 
 
         // Agregar un nuevo turno
@@ -39,6 +38,7 @@ namespace DataAccess.Services
                 throw;
             }
         }
+
         // Eliminar un turno
         public async Task<bool> CancelarTurno(int TurnoId)
         {
@@ -63,11 +63,48 @@ namespace DataAccess.Services
 
         // Metodos para Capa de validación
 
+        public async Task<List<Turno>> GetTurnosReservados(int profesional_Id)
+        {
+            try
+            {
+                var TurnosReservados = await _dbContext.Turno.Where(e => e.Profesional_Id == profesional_Id && e.Activo && e.FechaHora > fechaActual).ToListAsync();
+
+                return TurnosReservados;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<List<Horario>> GetHorariosPermitidos(int profesional_Id)
+        {
+
+            try
+            {
+                var HorariosPermitidos = await _dbContext.Horario.Where(e => e.Profesional_Id == profesional_Id).ToListAsync();
+
+                return HorariosPermitidos;
+
+
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+
+
         public async Task<List<AgendaBloqueada>> GetAgendaBloqueada(int profesional_Id)
         {
             try
             {
-                List<AgendaBloqueada> agendaBloqueadaList = await _dbContext.AgendaBloqueada.Where(e => e.Profesional_Id == profesional_Id && e.Activo).ToListAsync();
+
+                List<AgendaBloqueada> agendaBloqueadaList = await _dbContext.AgendaBloqueada
+                    .Where(e => e.Profesional_Id == profesional_Id && e.Activo && e.FechaDesde > fechaActual)
+                    .ToListAsync();
 
                 // Devolver la lista obtenida
                 return agendaBloqueadaList;
@@ -136,7 +173,7 @@ namespace DataAccess.Services
             {
 
                 throw;
-            }    
+            }
         }
     }
 }
