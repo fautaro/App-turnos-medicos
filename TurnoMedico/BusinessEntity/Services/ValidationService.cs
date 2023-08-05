@@ -145,44 +145,37 @@ namespace BusinessEntity.Services
         //Método para validar los dias completos segun los turnos cargados. Si un prof. trabaja 2 horarios por dia, y dichos turnos estan completos, entonces el dia esta completo
         public async Task<List<string>> GetDiasTurnosCompletos(int profesional_Id)
         {
-            //Get TurnosReservados y HorariosPermitidos
+            // Obtener TurnosReservados y HorariosPermitidos
             var TurnosReservados = await _dbWrapper.GetTurnosReservados(profesional_Id);
             var HorariosPermitidos = await _dbWrapper.GetHorariosPermitidos(profesional_Id);
 
-
-
-            //Lógica para generar los días bloqueados
+            // Crear una lista para almacenar los días bloqueados
             var ListaDiasBloqueados = new List<string>();
 
+            // Agrupar los turnos reservados por día
             var turnosPorDia = TurnosReservados.GroupBy(turno => turno.FechaHora.Date);
 
-            foreach (var fecha in turnosPorDia.Select(grupo => grupo.Key))
+            foreach (var grupo in turnosPorDia)
             {
-                var todosLosHorariosReservados = false;
+                var fecha = grupo.Key;
 
-                var horariosDelDia = HorariosPermitidos.Select(horario => horario.Hora);
+                // Obtener los minutos de los horarios permitidos para el día
+                var minutosHorariosPermitidos = HorariosPermitidos.Select(horario => horario.Hora.Hours * 60 + horario.Hora.Minutes);
 
-                foreach (var horarioReservado in turnosPorDia.First(grupo => grupo.Key == fecha))
-                {
-                    // Obtener solo la hora del turno reservado
-                    var horaReservada = horarioReservado.FechaHora.TimeOfDay;
+                // Obtener los minutos de los horarios reservados para el día
+                var minutosHorariosReservados = grupo.Select(turno => turno.FechaHora.Hour * 60 + turno.FechaHora.Minute);
 
-                    // Verificar si la hora del turno reservado está en los horarios permitidos para el día
-                    if (!horariosDelDia.Contains(horaReservada))
-                    {
-                        // Si hay algún horario no reservado, entonces no está completo
-                        todosLosHorariosReservados = true;
-                        break;
-                    }
-                }
-
-                if (todosLosHorariosReservados)
+                // Verificar si todos los horarios permitidos para el día están reservados
+                if (minutosHorariosPermitidos.All(hora => minutosHorariosReservados.Contains(hora)))
                 {
                     ListaDiasBloqueados.Add(fecha.ToString("yyyy/MM/dd"));
                 }
             }
+
             return ListaDiasBloqueados;
         }
+
+
 
 
         public async Task<List<string>> GetHorasDisponibles(RequestGetHorasDisponibles request)
