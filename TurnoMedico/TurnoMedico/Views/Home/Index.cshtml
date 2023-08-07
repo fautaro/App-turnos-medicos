@@ -168,11 +168,9 @@
                             <h5 class="information mt-4">Por favor, seleccione un horario</h5>
                             <div class="row">
                                 <div class="col-sm-12">
-                                    @*                                    <h6 class="information mt-4">Mañana</h6>
-                                    *@                                    <div class="form-group">
+                                    <div class="form-group">
                                         <button v-for="hora in horasDisponibles"
-                                                @* v-if="isHorarioManana(hora)"
-                                                *@ :key="hora"
+                                                :key="hora"
                                                 type="button"
                                                 class="form-control"
                                                 v-on:click="selectHora(hora)">
@@ -181,21 +179,6 @@
                                     </div>
                                 </div>
                             </div>
-                            @*                            <div class="row">
-                            <div class="col-sm-12">
-                            <h6 class="information mt-4">Tarde</h6>
-                            <div class="form-group">
-                            <button v-for="hora in horasDisponibles"
-                            v-if="!isHorarioManana(hora)"
-                            :key="hora"
-                            type="button"
-                            class="form-control"
-                            v-on:click="selectHora(hora)">
-                            {{ hora }}
-                            </button>
-                            </div>
-                            </div>
-                            </div>*@
                         </div>
 
                         <br />
@@ -364,11 +347,6 @@
                                                     Error al generar el turno
                                                 </p>
                                             </div>
-                                            @*                                            <div class="error-message" v-else>
-                                            <p style="text-align:center">
-                                            Error al generar el turno
-                                            </p>
-                                            </div>*@
                                         </div>
                                     </div>
                                 </div>
@@ -597,8 +575,8 @@
                 this.pacTelefono = "";
                 this.pacEmail = "";
                 this.showError = false;
-                this.showErrorMail= false;
-                this.showErrorNombre= false;
+                this.showErrorMail = false;
+                this.showErrorNombre = false;
                 this.ErrorMensajeGuardarTurno = "";
             },
             goFirstPage(error) {
@@ -640,7 +618,7 @@
                                 Hora: this.horaSeleccionada,
                                 Profesional: '@Model.Titulo',
                                 ProfesionalId: @Model.Profesional_Id
-                                                }
+                            }
 
                             fetch('@Url.Action("ConfirmarTurno", "Home")', {
                                 method: 'POST',
@@ -662,9 +640,6 @@
                                         this.ErrorMensajeGuardarTurno = responseData.mensaje
                                         this.pag = 6
                                     }
-
-
-
                                 })
                                 .catch(error => {
                                     this.pag = 6;
