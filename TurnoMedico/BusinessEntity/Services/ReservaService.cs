@@ -15,6 +15,7 @@ namespace BusinessEntity.Services
         private DbWrapper _dbWrapper;
         private ValidationService _validationService;
         private TokenService _tokenService;
+        private readonly DateTime fechaActual = DateTime.Now;
 
 
         public ReservaService(DbWrapper dbWrapper, ValidationService validationService, TokenService tokenService)
@@ -31,6 +32,9 @@ namespace BusinessEntity.Services
 
             try
             {
+
+                bool DiaActualDisponible = await _validationService.ValidarDiaActual(request.Profesional_Id);
+
                 var agendaBloqueada = _dbWrapper.GetAgendaBloqueada(request.Profesional_Id).Result;
 
                 if (agendaBloqueada != null)
@@ -47,7 +51,10 @@ namespace BusinessEntity.Services
                 //Se obtienen los días que tienen todos los turnos completos y se agregan a la lista de días bloqueados
                 response.DiasBloqueados.AddRange(await _validationService.GetDiasTurnosCompletos(request.Profesional_Id));
 
-
+                if (!DiaActualDisponible)
+                {
+                    response.DiasBloqueados.Add(fechaActual.ToString("yyyy/MM/dd"));
+                }
                 //Ordeno lista de días bloqueados
                 response.DiasBloqueados.Sort();
                 response.Success = true;
@@ -101,7 +108,7 @@ namespace BusinessEntity.Services
                     {
                         response.Success = false;
                         response.Estado = "E";
-                        response.Mensaje = "Tu mail ya tiene turno existente en la semana seleccionada";
+                        response.Mensaje = "Tu mail ya tiene un turno existente en la semana seleccionada";
 
                     }
                     else

@@ -98,6 +98,21 @@ namespace DataAccess.Services
             }
         }
 
+        public async Task<List<Turno>> GetTurnosReservadosDelDia(int profesional_Id)
+        {
+            try
+            {
+                var TurnosReservados = await _dbContext.Turno.Where(e => e.Profesional_Id == profesional_Id && e.Activo && e.FechaHora == fechaActual).ToListAsync();
+
+                return TurnosReservados;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+
 
         public async Task<List<Horario>> GetHorariosPermitidos(int profesional_Id)
         {

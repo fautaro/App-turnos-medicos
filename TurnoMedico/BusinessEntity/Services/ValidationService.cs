@@ -29,6 +29,7 @@ namespace BusinessEntity.Services
 
         #region Guardar Turno
 
+
         //Método para validar que el mail ya no tenga un turno seleccionado en la semana
 
         public async Task<bool> validateUsuarioTieneTurno(RequestDatosTurno turno)
@@ -236,6 +237,32 @@ namespace BusinessEntity.Services
             }
 
             return response;
+        }
+
+
+        public async Task<bool> ValidarDiaActual(int Profesional_Id)
+        {
+            //Horarios que trabaja el profesional todos los días
+            var GetHorariosPermitidos = await _dbWrapper.GetHorariosPermitidos(Profesional_Id);
+            var GetTurnosDelDia = await _dbWrapper.GetTurnosReservadosDelDia(Profesional_Id);
+
+            // Filtrar horarios permitidos eliminando los horarios ya reservados
+            var horariosLibres = GetHorariosPermitidos
+                .Where(horario => !GetTurnosDelDia.Any(turno =>
+                    turno.FechaHora.TimeOfDay == horario.Hora &&
+                    turno.FechaHora.Date == fechaActual.Date))
+                .ToList();
+
+            // Filtrar horarios permitidos eliminando los horarios en el pasado
+            var horariosLibresSinPasado = horariosLibres
+                .Where(horario => fechaActual.TimeOfDay < horario.Hora)
+                .ToList();
+
+            // Validar si hay al menos un horario libre para el día actual
+            var hayHorariosLibres = horariosLibresSinPasado.Any();
+
+            return hayHorariosLibres;
+
         }
 
 

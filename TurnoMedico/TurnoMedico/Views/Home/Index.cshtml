@@ -318,34 +318,34 @@
                         </div>
                     </div>
                 </div>
-                <div class="card px-1 py-4" v-else>
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <button type="button" class="btn-close" aria-label="Close" v-on:click="goFirstPage(true)"></button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h5 class="information mt-4">No pudimos confirmar tu turno</h5>
-                        <div class="row" style="margin-top:10px">
-                            <div class="col-sm-12">
-                                <div class="form-group">
-                                    <div class="d-flex justify-content-center">
-                                        <div class="swal2-icon swal2-info swal2-icon-show" style="display: flex;">
-                                            <div class="swal2-icon-content">i</div>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex justify-content-center">
-                                        <div style="margin-top:8px">
-                                            <div class="error-message" v-if="ErrorMensajeGuardarTurno" style="margin-top: 15px; text-align: center; display: flex; justify-content: center; align-items: center; height: 60px;">
-                                                <p style="margin: 0; padding: 5px;">
-                                                    {{ ErrorMensajeGuardarTurno }}
-                                                </p>
+                <div v-else>    
+                    <div class="card px-1 py-4">
+                        <div class="card-body">
+                            <div class="col-sm-12" style="margin-left:5px">
+                                <button type="button" class="btn-close" aria-label="Close" v-on:click="goFirstPage(true)"></button>
+                            </div>
+                            <h5 class="information mt-4">No pudimos confirmar tu turno</h5>
+                            <div class="row" style="margin-top:10px">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <div class="d-flex justify-content-center">
+                                            <div class="swal2-icon swal2-info swal2-icon-show" style="display: flex;">
+                                                <div class="swal2-icon-content">i</div>
                                             </div>
+                                        </div>
+                                        <div class="d-flex justify-content-center">
+                                            <div style="margin-top:8px">
+                                                <div class="error-message" v-if="ErrorMensajeGuardarTurno" style="margin-top: 15px; text-align: center; display: flex; justify-content: center; align-items: center; height: 60px;">
+                                                    <p style="margin: 0; padding: 5px;">
+                                                        {{ ErrorMensajeGuardarTurno }}
+                                                    </p>
+                                                </div>
 
-                                            <div class="error-message" v-else style="margin-top: 15px; text-align: center; display: flex; justify-content: center; align-items: center; height: 60px;">
-                                                <p style="margin: 0; padding: 5px;">
-                                                    Error al generar el turno
-                                                </p>
+                                                <div class="error-message" v-else style="margin-top: 15px; text-align: center; display: flex; justify-content: center; align-items: center; height: 60px;">
+                                                    <p style="margin: 0; padding: 5px;">
+                                                        Error al generar el turno
+                                                    </p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -354,6 +354,7 @@
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
         @* Pag 7 - Datos del turno*@
@@ -618,7 +619,7 @@
                                 Hora: this.horaSeleccionada,
                                 Profesional: '@Model.Titulo',
                                 ProfesionalId: @Model.Profesional_Id
-                            }
+                                        }
 
                             fetch('@Url.Action("ConfirmarTurno", "Home")', {
                                 method: 'POST',
