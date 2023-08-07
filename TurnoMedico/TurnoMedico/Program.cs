@@ -55,5 +55,9 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}"
 );
-
+app.MapControllerRoute(
+    name: "error",
+    pattern: "{*url}",
+    defaults: new { controller = "Home", action = "Error" } // Cambia esto según tu controlador y acción de error
+);
 app.Run();

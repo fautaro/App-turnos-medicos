@@ -3,6 +3,7 @@ using BusinessEntity.Request;
 using BusinessEntity.Response;
 using DataAccess.Models;
 using DataAccess.Services;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,8 @@ namespace BusinessEntity.Services
     public class ValidationService
     {
         private DbWrapper _dbWrapper;
+        private readonly DateTime fechaActual = DateTime.Now;
+
 
         public ValidationService(DbWrapper dbWrapper)
         {
@@ -25,6 +28,29 @@ namespace BusinessEntity.Services
 
 
         #region Guardar Turno
+
+        //Método para validar que el mail ya no tenga un turno seleccionado en la semana
+
+        public async Task<bool> validateUsuarioTieneTurno(RequestDatosTurno turno)
+        {
+            DateTime FechaHora = DateTime.ParseExact($"{turno.Fecha} {turno.Hora}", "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
+
+            //Comprobar que ese mail no se encuentre asociado a un turno vigente existente
+            // Obtener el día de la semana del turno solicitado
+            DayOfWeek diaTurno = FechaHora.DayOfWeek;
+
+            // Obtener la fecha del primer día de la semana (domingo) en el que se encuentra el turno solicitado
+            DateTime primerDiaSemana = FechaHora.Date.AddDays(-(int)diaTurno);
+
+            // Obtener la fecha del último día de la semana (sábado) en el que se encuentra el turno solicitado
+            DateTime ultimoDiaSemana = primerDiaSemana.AddDays(6);
+            if (await _dbWrapper.GetTurnosSemana(turno.ProfesionalId, turno.Email, FechaHora, diaTurno, primerDiaSemana, ultimoDiaSemana))
+            {
+                return false;
+            }
+            return true;
+        }
+
         //Método para validar si el turno que se intenta guardar es válida
         public async Task<bool> validateReserva(RequestDatosTurno turno)
         {
@@ -68,7 +94,6 @@ namespace BusinessEntity.Services
             {
                 return false;
             }
-
 
             //El turno es correcto
             return true;
@@ -180,7 +205,7 @@ namespace BusinessEntity.Services
 
         public async Task<List<string>> GetHorasDisponibles(RequestGetHorasDisponibles request)
         {
-
+            var response = new List<string>();
             //Convierto el string en pantalla a un objeto DateTime
             DateTime fechaBuscada = DateTime.ParseExact(request.Fecha, "dd/MM/yyyy", CultureInfo.InvariantCulture);
 
@@ -195,15 +220,23 @@ namespace BusinessEntity.Services
                 .ToList();
 
             // Obtener los horarios disponibles (horarios permitidos que no están reservados)
-            var horariosDisponibles = GetHorariosPermitidos
+            if (fechaBuscada.Equals(fechaActual.Date))
+            {
+                response = GetHorariosPermitidos
+                .Where(horario => !horariosReservadosDelDia.Contains(horario.Hora) && horario.Hora > fechaActual.TimeOfDay)
+                .Select(horario => horario.Hora.ToString(@"hh\:mm"))
+                .ToList();
+            }
+            else
+            {
+                response = GetHorariosPermitidos
                 .Where(horario => !horariosReservadosDelDia.Contains(horario.Hora))
                 .Select(horario => horario.Hora.ToString(@"hh\:mm"))
                 .ToList();
+            }
 
-            return horariosDisponibles;
+            return response;
         }
-
-
 
 
         #endregion Metodos Load Aplicación

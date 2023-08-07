@@ -97,43 +97,51 @@ namespace BusinessEntity.Services
 
                 if (await _validationService.validateReserva(datosTurno))
                 {
-                    DateTime FechaHora = DateTime.ParseExact($"{datosTurno.Fecha} {datosTurno.Hora}", "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
-
-                    Turno turno = new Turno()
+                    if (!await _validationService.validateUsuarioTieneTurno(datosTurno))
                     {
-                        Nombre = datosTurno.Nombre,
-                        Apellido = datosTurno.Apellido,
-                        Email = datosTurno.Email,
-                        FechaHora = FechaHora,
-                        Profesional_Id = datosTurno.ProfesionalId,
-                        Telefono = datosTurno.Telefono,
-                        Activo = true,
-                        Token = _tokenService.GenerateGuidToken()
+                        response.Success = false;
+                        response.Estado = "E";
+                        response.Mensaje = "Tu mail ya tiene turno existente en la semana seleccionada";
 
-                    };
-                    var TurnoGeneradoDB = await _dbWrapper.AddTurno(turno);
-
-                    response.Success = true;
-                    response.Reserva_Id = TurnoGeneradoDB.Turno_Id;
-                    response.Estado = "C";
-                    response.Mensaje = "Turno guardado Correctamente";
-                    response.TurnoConfirmado = new ResponseTurnoConfirmado()
+                    }
+                    else
                     {
-                        Cliente = $"{datosTurno.Nombre} {datosTurno.Apellido}",
-                        Email = datosTurno.Email,
-                        Fecha = datosTurno.Fecha,
-                        Hora = datosTurno.Hora,
-                        Profesional = datosTurno.Profesional,
-                        Telefono = datosTurno.Telefono
+                        DateTime FechaHora = DateTime.ParseExact($"{datosTurno.Fecha} {datosTurno.Hora}", "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
 
-                    };
+                        Turno turno = new Turno()
+                        {
+                            Nombre = datosTurno.Nombre,
+                            Apellido = datosTurno.Apellido,
+                            Email = datosTurno.Email,
+                            FechaHora = FechaHora,
+                            Profesional_Id = datosTurno.ProfesionalId,
+                            Telefono = datosTurno.Telefono,
+                            Activo = true,
+                            Token = _tokenService.GenerateGuidToken()
 
+                        };
+                        var TurnoGeneradoDB = await _dbWrapper.AddTurno(turno);
+
+                        response.Success = true;
+                        response.Reserva_Id = TurnoGeneradoDB.Turno_Id;
+                        response.Estado = "C";
+                        response.TurnoConfirmado = new ResponseTurnoConfirmado()
+                        {
+                            Cliente = $"{datosTurno.Nombre} {datosTurno.Apellido}",
+                            Email = datosTurno.Email,
+                            Fecha = datosTurno.Fecha,
+                            Hora = datosTurno.Hora,
+                            Profesional = datosTurno.Profesional,
+                            Telefono = datosTurno.Telefono
+
+                        };
+                    }
                 }
                 else
                 {
                     response.Success = false;
                     response.Estado = "E";
-                    response.Mensaje = "Ocurrió un error al guardar el turno";
+                    response.Mensaje = "Ocurrió un error al guardar el turno. Verifique los datos ingresados";
                 }
                 return response;
             }

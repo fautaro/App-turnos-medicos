@@ -63,6 +63,26 @@ namespace DataAccess.Services
 
         // Metodos para Capa de validación
 
+        //Metodo que devuelve true si el usuario ya tiene un turno para la semana seleccionada
+        public async Task<bool> GetTurnosSemana(int profesional_Id, string email, DateTime fecha, DayOfWeek diaTurno, DateTime primerDiaSemana, DateTime ultimoDiaSemana)
+        {
+            try
+            {
+                // Verificar si existe algún turno en la misma semana y con el mismo correo electrónico
+                var turnoExistente = await _dbContext.Turno
+                    .AnyAsync(e => e.Profesional_Id == profesional_Id &&
+                                   e.Email == email &&
+                                   e.FechaHora >= primerDiaSemana && e.FechaHora <= ultimoDiaSemana);
+
+                return turnoExistente;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<List<Turno>> GetTurnosReservados(int profesional_Id)
         {
             try
@@ -77,6 +97,7 @@ namespace DataAccess.Services
                 throw;
             }
         }
+
 
         public async Task<List<Horario>> GetHorariosPermitidos(int profesional_Id)
         {
