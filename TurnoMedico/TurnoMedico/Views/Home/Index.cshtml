@@ -18,6 +18,7 @@
     .fade-leave-to {
         opacity: 0;
     }
+
 </style>
 <div id="app">
     @*    Pag 0*@
@@ -67,7 +68,7 @@
         </div>
         @* Pag 1 - Botones de selección de día y horario*@
         <div class="page-one" id="page-one" v-if="pag == 1">
-            <div class="container mt-5 mb-5 d-flex justify-content-center">
+            <div class="container mt-5 mb-5 d-flex justify-content-center ">
                 <div class="card px-1 py-4">
                     <div class="card-body">
                         <h5 class="information mt-4">Por favor, seleccione un día y horario</h5>
@@ -79,7 +80,6 @@
                                             <input type="text" disabled class="form-control" v-on:click="getDiasBloqueados(true)" v-model="fechaSeleccionada" style="text-align:left">
                                             <button type="button" class="btn btn-success btn-edit" v-on:click="getDiasBloqueados(true)"><i class="fa-solid fa-pen-to-square" style="color:white"></i></button>
                                         </div>
-
                                     </div>
                                     <div v-else>
                                         <input type="button" class="form-control" placeholder="Día" v-on:click="getDiasBloqueados(false)" value="Día" style="text-align:left">
@@ -102,6 +102,10 @@
                                     <div v-else>
                                         <input class="form-control" type="button" placeholder="Horario" v-on:click="setHorario(false)" value="Horario" style="text-align:left">
                                     </div>
+                                </div>
+                                <!-- Spinner de espera -->
+                                <div class="d-flex justify-content-center" v-if="wait">
+                                    <div class="spinner-border text-primary" role="status"></div>
                                 </div>
                             </div>
                         </div>
@@ -272,7 +276,11 @@
                         </div>
                         <div v-if="pag == 4 && showError && (pacNombre == '' || pacApellido == '' || pacTelefono == '' || pacEmail == '' || fechaSeleccionada == '' || horaSeleccionada == '')">
                             <p style="text-align:center">Por favor, complete todos los campos</p>
+
                         </div>
+                        <p style="text-align:center" v-if="showErrorMail">Por favor, ingrese un correo electrónico válido.</p>
+                        <p style="text-align:center" v-if="showErrorNombre">Por favor, escriba un nombre o apellido válido.</p>
+
                         <div class="d-grid gap-2 col-12 mx-auto">
                             <button class="btn btn-primary btn-block confirm-button" v-on:click="btnConfirmarTurno()">Confirmar turno</button>
                         </div>
@@ -284,10 +292,9 @@
         <div class="page-five" id="page-five" v-else-if="pag == 5">
             <div class="container mt-5 mb-5 d-flex justify-content-center">
                 <div class="card px-1 py-4">
-                    <div class="card-body">
-
+                    <div class="card-body" style="margin-bottom:15px">
                         <h5 class="information mt-4">Confirmando turno</h5>
-                        <div class="row" style="margin-top:20px">
+                        <div class="row" style="margin-top:30px">
                             <div class="col-sm-12">
                                 <div class="form-group">
                                     <div class="d-flex justify-content-center">
@@ -410,6 +417,10 @@
                 horasDisponibles: [], //"09:00"
                 //Variable para mostrar error
                 showError: false,
+                showErrorMail: false,
+                showErrorNombre: false,
+                //Variable espera
+                wait: false,
                 //Datos del paciente
                 pacNombre: "",
                 pacApellido: "",
@@ -436,6 +447,34 @@
             Datepicker: VueDatePicker
         },
         methods: {
+            validarEmail(email) {
+                const emailRegex = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
+                if (emailRegex.test(email)) {
+                    this.showErrorMail = true
+                    return true;
+                } else {
+                    this.showErrorMail = false
+                    return false
+                }
+            },
+
+            validarNombreApellido(nombreApellido) {
+                if (nombreApellido.length >= 2) {
+                    this.showErrorNombre = true;
+                    return true;
+                } else {
+                    this.showErrorNombre = false;
+                    return false;
+                }
+            },
+            spinner(show) {
+                if (show) {
+                    this.wait = true;
+
+                } else {
+                    this.wait = false;
+                }
+            },
             isHorarioManana(hora) {
                 if (!hora) {
                     return false; // O retorna lo que sea más adecuado para tu caso
@@ -445,6 +484,7 @@
                 return horaNumerica < 13;
             },
             getDiasBloqueados(edit) {
+                this.spinner(true);
                 const self = this; // Almacenar la referencia de "this"
 
                 const Profesional = {
@@ -462,6 +502,7 @@
                     .then(responseData => {
                         if (responseData.success) {
                             this.fechasBloqueadas = responseData.diasBloqueados;
+                            this.spinner(false);
                             if (edit) {
                                 this.setDia(true)
                             } else {
@@ -469,10 +510,12 @@
 
                             }
                         } else {
+                            this.spinner(false);
                             this.pag = 6; //Pag de error
                         }
                     })
                     .catch(error => {
+                        this.wait(false);
                         this.pag = 6; //Pag de error
                         console.error('Error al enviar la solicitud:', error);
                     });
@@ -544,48 +587,52 @@
                 }
             },
             btnConfirmarTurno() {
-                if (this.pacNombre == "" || this.pacApellido == "" || this.pacTelefono == "" || this.pacEmail == "" || this.fechaSeleccionada == "" || this.horaSeleccionada == "") {
-                    this.showError = true;
-                } else {
-                    this.pag = 5;
 
-                    //Obj: turno
-                    const turno = {
-                        Nombre: this.pacNombre,
-                        Apellido: this.pacApellido,
-                        Telefono: this.pacTelefono.toString(),
-                        Email: this.pacEmail,
-                        Fecha: this.fechaSeleccionada,
-                        Hora: this.horaSeleccionada,
-                        Profesional: '@Model.Titulo',
-                        ProfesionalId: @Model.Profesional_Id
-                                }
+                if (this.validarEmail(this.pacEmail)) {
+                    if (this.validarNombreApellido(this.pacNombre) && this.validarNombreApellido(this.pacApellido)) {
+                        if (this.pacNombre == "" || this.pacApellido == "" || this.pacTelefono == "" || this.pacEmail == "" || this.fechaSeleccionada == "" || this.horaSeleccionada == "") {
+                            this.showError = true;
+                        } else {
+                            this.pag = 5;
 
-                    fetch('@Url.Action("ConfirmarTurno", "Home")', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json', // Indica que los datos son JSON
-                        },
-                        body: JSON.stringify(turno), // Convierte el objeto JSON a una cadena JSON
-                    })
-                        .then(response => response.json())
-                        .then(responseData => {
-                            if (responseData.success) {
-                                this.reservaSuccess = true;
-                                this.reservaConfirmada = responseData.turnoConfirmado
+                            //Obj: turno
+                            const turno = {
+                                Nombre: this.pacNombre,
+                                Apellido: this.pacApellido,
+                                Telefono: this.pacTelefono.toString(),
+                                Email: this.pacEmail,
+                                Fecha: this.fechaSeleccionada,
+                                Hora: this.horaSeleccionada,
+                                Profesional: '@Model.Titulo',
+                                ProfesionalId: @Model.Profesional_Id
                             }
-                            this.pag = 6;
 
-                            setTimeout(() => {
-                                this.pag = 7;
-                            }, 3000)
+                            fetch('@Url.Action("ConfirmarTurno", "Home")', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json', // Indica que los datos son JSON
+                                },
+                                body: JSON.stringify(turno), // Convierte el objeto JSON a una cadena JSON
+                            })
+                                .then(response => response.json())
+                                .then(responseData => {
+                                    if (responseData.success) {
+                                        this.reservaSuccess = true;
+                                        this.reservaConfirmada = responseData.turnoConfirmado
+                                    }
+                                    this.pag = 6;
 
-                        })
-                        .catch(error => {
-                            this.pag = 6;
-                            console.error('Error al enviar la solicitud:', error);
-                        });
+                                    setTimeout(() => {
+                                        this.pag = 7;
+                                    }, 3000)
 
+                                })
+                                .catch(error => {
+                                    this.pag = 6;
+                                    console.error('Error al enviar la solicitud:', error);
+                                });
+                        }
+                    }
                 }
             },
 
