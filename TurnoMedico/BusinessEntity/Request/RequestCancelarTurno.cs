@@ -8,7 +8,7 @@ namespace BusinessEntity.Models.Request
 {
     public class RequestCancelarTurno
     {
-        public int Turno_Id { get; set; }
+        public int Profesional_Id { get; set; }
         public string Token { get; set; }
 
     }

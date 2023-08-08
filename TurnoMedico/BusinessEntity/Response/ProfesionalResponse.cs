@@ -9,7 +9,7 @@ namespace BusinessEntity.Response
     public class ProfesionalResponse
     {
         public bool Activo { get; set; }
-        public int? Profesional_Id { get; set; }
+        public int Profesional_Id { get; set; }
         public string? Profesional { get; set; }
 
         public string? Titulo { get; set; }

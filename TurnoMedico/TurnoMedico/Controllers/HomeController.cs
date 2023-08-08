@@ -3,6 +3,7 @@ using BusinessEntity.Models.Response;
 using BusinessEntity.Request;
 using BusinessEntity.Response;
 using BusinessEntity.Services;
+using BusinessEntity.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using TurnoMedico.Models;
@@ -101,22 +102,63 @@ namespace TurnoMedico.Controllers
 
         }
 
-        [HttpPost]
-        public async Task<ResponseCancelarTurno> CancelarTurno([FromBody] RequestCancelarTurno turno)
+        [HttpGet]
+        [Route("{profesional}/cancelarturno")]
+
+        public async Task<IActionResult> CancelarTurno(string profesional, string token)
         {
+            CancelarTurnoViewModel Response = new CancelarTurnoViewModel();
+
             try
             {
-                //await Task.Delay(4000);
+                var Profesional = await _validationService.ValidateProfesional(profesional);
 
-                var Response = await _reservaService.CancelarReserva(turno);
-
-                return Response;
+                if (Profesional != null && Profesional.Activo)
+                {
+                    Response = await _reservaService.GetCancelacionTurno(token, Profesional);
+                }
+                else
+                {
+                    Response.Success = false;
+                    Response.Mensaje = "No se pudo cancelar el turno";
+                }
+                return View(Response);
 
             }
             catch (Exception ex)
             {
+                Response.Success = false;
+                Response.Mensaje = "No se pudo cancelar el turno";
 
                 throw;
+            }
+
+        }
+
+        [HttpPost]
+        public async Task<ResponseCancelarTurno> ConfirmCancelarTurno([FromBody] RequestCancelarTurno request)
+        {
+            ResponseCancelarTurno response = new ResponseCancelarTurno();
+
+            try
+            {
+                if (request != null)
+                {
+                    response = await _reservaService.CancelarReserva(request);
+                } else
+                {
+                    response.Success = false;
+                    response.Mensaje = "Ocurrió un error al cancelar la reserva";
+                }
+                return response;
+
+
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Mensaje = "Ocurrió un error al cancelar la reserva";
+                return response;
             }
 
         }

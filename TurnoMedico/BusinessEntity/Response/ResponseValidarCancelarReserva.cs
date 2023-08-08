@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessEntity.Models.Response
+namespace BusinessEntity.Response
 {
-    public class ResponseCancelarTurno
+    public class ResponseValidarCancelarReserva
     {
         public bool Success { get; set; }
-        public string Mensaje { get; set; }
-
+        public bool Mensaje { get; set; }
     }
 }

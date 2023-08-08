@@ -40,11 +40,12 @@ namespace DataAccess.Services
         }
 
         // Eliminar un turno
-        public async Task<bool> CancelarTurno(int TurnoId)
+        public async Task<bool> CancelarTurno(string token)
         {
             try
             {
-                var TurnoACancelar = await _dbContext.Turno.Where(e => e.Turno_Id == TurnoId).FirstOrDefaultAsync();
+                var TurnoACancelar = await _dbContext.Turno.Where(e => e.Token == token).FirstOrDefaultAsync();
+
                 TurnoACancelar.Activo = false;
                 _dbContext.Turno.Update(TurnoACancelar);
                 await _dbContext.SaveChangesAsync();
@@ -72,7 +73,7 @@ namespace DataAccess.Services
                 var turnoExistente = await _dbContext.Turno
                     .AnyAsync(e => e.Profesional_Id == profesional_Id &&
                                    e.Email == email &&
-                                   e.FechaHora >= primerDiaSemana && e.FechaHora <= ultimoDiaSemana);
+                                   e.FechaHora >= primerDiaSemana && e.FechaHora <= ultimoDiaSemana && e.Activo);
 
                 return turnoExistente;
             }
@@ -156,7 +157,7 @@ namespace DataAccess.Services
         {
             try
             {
-                var TurnoRepetido = await _dbContext.Turno.Where(e => e.FechaHora == fechaHora && e.Profesional_Id == profesionalId).FirstOrDefaultAsync();
+                var TurnoRepetido = await _dbContext.Turno.Where(e => e.FechaHora == fechaHora && e.Profesional_Id == profesionalId && e.Activo).FirstOrDefaultAsync();
 
                 return TurnoRepetido;
             }
@@ -166,11 +167,11 @@ namespace DataAccess.Services
             }
 
         }
-        public async Task<Turno> CheckToken(int TurnoId, string token)
+        public async Task<Turno> CheckToken(string token)
         {
             try
             {
-                var TurnoACancelar = await _dbContext.Turno.Where(e => e.Token == token).FirstOrDefaultAsync();
+                var TurnoACancelar = await _dbContext.Turno.Where(e => e.Token == token && e.FechaHora > fechaActual).FirstOrDefaultAsync();
 
                 return TurnoACancelar;
             }

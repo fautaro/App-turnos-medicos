@@ -1,4 +1,5 @@
 ﻿using BusinessEntity.Models.Request;
+using BusinessEntity.Models.Response;
 using BusinessEntity.Request;
 using BusinessEntity.Response;
 using DataAccess.Models;
@@ -106,20 +107,39 @@ namespace BusinessEntity.Services
 
         #region Cancelar Turno
         //Método para validar el turno que se intenta cancelar
-        public async Task<bool> ValidateCancelarReserva(RequestCancelarTurno turno)
+        public async Task<ResponseCancelarTurno> ValidateCancelarReserva(RequestCancelarTurno turno)
         {
-            if (turno == null || turno.Token == null || turno.Turno_Id == null) return false;
+            ResponseCancelarTurno response = new ResponseCancelarTurno();
+
+            if (turno == null || turno.Token == null || turno.Profesional_Id == null)
+            {
+                response.Success = false;
+                response.Mensaje = "El turno que intentas cancelar no ha sido encontrado.";
+                return response;
+            };
 
 
-            var Token = await _dbWrapper.CheckToken(turno.Turno_Id, turno.Token);
-            var Reserva = await _dbWrapper.CheckReservaId(turno.Turno_Id, turno.Token);
+            var TurnoDb = await _dbWrapper.CheckToken(turno.Token);
 
 
-            if (Token == null || Reserva == null) return false;
+            if (TurnoDb == null || !TurnoDb.Activo)
+            {
+                response.Success = false;
+                response.Mensaje = "El turno que intentas cancelar no ha sido encontrado.";
+                return response;
+            };
 
-            if (Token.Equals(Reserva)) return true;
+            if (TurnoDb.FechaHora < fechaActual)
+            {
+                response.Success = false;
+                response.Mensaje = "El turno que intentas cancelar ya ha caducado.";
+                return response;
+            };
 
-            return false;
+            response.Success = true;
+            return response;
+
+
         }
         #endregion Cancelar Turno
 
@@ -136,7 +156,7 @@ namespace BusinessEntity.Services
             if (Profesional == null || Profesional.Activo.Equals(false))
             {
                 response.Activo = false;
-                response.Profesional_Id = null;
+                response.Profesional_Id = 0;
                 return response;
 
             }

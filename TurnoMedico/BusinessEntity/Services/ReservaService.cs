@@ -1,11 +1,11 @@
-﻿using BusinessEntity.Models.Request;
+﻿using antlr;
+using BusinessEntity.Models.Request;
 using BusinessEntity.Models.Response;
 using BusinessEntity.Request;
 using BusinessEntity.Response;
+using BusinessEntity.ViewModels;
 using DataAccess.Models;
 using DataAccess.Services;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using System.Globalization;
 
 namespace BusinessEntity.Services
@@ -25,6 +25,9 @@ namespace BusinessEntity.Services
             _tokenService = tokenService;
 
         }
+
+
+
 
         public async Task<ResponseGetDiasBloqueados> GetDiasBloqueados(RequestGetDiasBloqueados request)
         {
@@ -162,34 +165,57 @@ namespace BusinessEntity.Services
 
                 return response;
             }
-
         }
 
-        public async Task<ResponseCancelarTurno> CancelarReserva(RequestCancelarTurno turno)
+        public async Task<CancelarTurnoViewModel> GetCancelacionTurno(string Token, ProfesionalResponse Profesional)
         {
+            CancelarTurnoViewModel response = new CancelarTurnoViewModel();
+            var Turno = await _dbWrapper.CheckToken(Token);
+
+            if (Turno != null)
+            {
+                response.Profesional = Profesional.Profesional;
+                response.Paciente = $"{Turno.Nombre} {Turno.Apellido}";
+                response.FechaHora = Turno.FechaHora.ToString("dd/MM/yyyy HH:mm");
+                response.Profesional_Id = Turno.Profesional_Id;
+                response.Token = Turno.Token;
+                response.Success = true;
+
+            } else
+            {
+                response.Success = false;
+                response.Mensaje = "No hemos podido encontrar el turno que deseas cancelar";
+            }
+
+            return response;
+        }
+
+        public async Task<ResponseCancelarTurno> CancelarReserva(RequestCancelarTurno request)
+        {
+            ResponseCancelarTurno response = new ResponseCancelarTurno();
+
             try
             {
-                ResponseCancelarTurno response = new ResponseCancelarTurno();
+                ResponseCancelarTurno Validacion = await _validationService.ValidateCancelarReserva(request);
 
-                if (await _validationService.ValidateCancelarReserva(turno))
+
+                if (Validacion.Success)
                 {
-                    await _dbWrapper.CancelarTurno(turno.Turno_Id);
+                    await _dbWrapper.CancelarTurno(request.Token);
 
                     response.Success = true;
-                    response.Estado = "Cancelada";
-                    response.Mensaje = $"La reserva {turno.Turno_Id} ha sido cancelada correctamente";
+                    response.Mensaje = $"El turno ha sido cancelado correctamente";
                 }
                 else
                 {
-                    response.Success = true;
-                    response.Mensaje = $"Hubo un error al validar la reserva";
+                    response.Success = Validacion.Success;
+                    response.Mensaje = Validacion.Mensaje;
 
                 }
                 return response;
             }
             catch (Exception ex)
             {
-                ResponseCancelarTurno response = new ResponseCancelarTurno();
 
                 response.Success = true;
                 response.Mensaje = $"Hubo un error al cancelar la reserva";
