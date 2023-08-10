@@ -5,6 +5,9 @@ using System.Net.Mail;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
+using DataAccess.Services;
+using DataAccess.Models;
 
 namespace BusinessEntity.Services
 {
@@ -14,21 +17,46 @@ namespace BusinessEntity.Services
         private readonly int _smtpPort;
         private readonly string _smtpUsername;
         private readonly string _smtpPassword;
+        private DbWrapper _dbWrapper;
 
-        public MailService(string smtpServer, int smtpPort, string smtpUsername, string smtpPassword)
+#if DEBUG
+        public MailService(DbWrapper dbWrapper, string smtpServer = "localhost", int smtpPort = 1025, string smtpUsername = null, string smtpPassword = null)
         {
+            _dbWrapper = dbWrapper;
             _smtpServer = smtpServer;
             _smtpPort = smtpPort;
             _smtpUsername = smtpUsername;
             _smtpPassword = smtpPassword;
+
         }
-
-
-
-        public async Task EnviarMailConfirmacionTurno(string toEmail, string profesional, string alias, string FechaHora, DateTime FechaHoraTurno, string token)
+#endif
+#if RELEASE
+        public MailService(DbWrapper dbWrapper, string smtpServer, int smtpPort, string smtpUsername, string smtpPassword)
         {
+            _dbWrapper = dbWrapper;
+            _smtpServer = smtpServer;
+            _smtpPort = smtpPort;
+            _smtpUsername = smtpUsername;
+            _smtpPassword = smtpPassword;
+
+        }
+#endif
+
+
+        public async Task EnviarMailConfirmacionTurno(string toEmail, string profesional, int Profesional_Id, string FechaHora, DateTime FechaHoraTurno, string token)
+        {
+
+            var Profesional = await _dbWrapper.GetProfesionalById(Profesional_Id);
+
+#if DEBUG
+            var Ambiente = "https://localhost:7139";
+#endif
+#if RELEASE
+            var Ambiente = "localhost:7139";
+
+#endif
             var Subject = $"Turno confirmado con {profesional}";
-            var link = $"https://url.com/{alias}/cancelarturno?token={token}";
+            var link = $"{Ambiente}/{Profesional.Alias}/cancelarturno?token={token}";
             var EventTitle = $"Turno con {profesional}";
             string Body = $@"<!DOCTYPE html>
             <html>
@@ -85,8 +113,9 @@ namespace BusinessEntity.Services
             </body>
             </html>";
 
+            var ics = GenerateICSContent(EventTitle, FechaHoraTurno, FechaHoraTurno.AddHours(1), profesional);
 
-            await SendEmailWithICSAsync(toEmail, Subject, Body, EventTitle, FechaHoraTurno);
+            await SendEmailWithICSAsync(toEmail, Subject, Body, EventTitle, FechaHoraTurno, ics);
         }
 
 
@@ -99,8 +128,15 @@ namespace BusinessEntity.Services
                 using (var client = new SmtpClient(_smtpServer, _smtpPort))
                 {
                     client.UseDefaultCredentials = false;
+#if RELEASE
                     client.Credentials = new NetworkCredential(_smtpUsername, _smtpPassword);
                     client.EnableSsl = true;
+#endif
+
+#if DEBUG
+                    client.EnableSsl = false;
+#endif
+
 
                     var message = new MailMessage
                     {
@@ -125,27 +161,32 @@ namespace BusinessEntity.Services
 
 
 
-        public async Task SendEmailWithICSAsync(string toEmail, string subject, string body, string eventTitle, DateTime eventStart)
+        public async Task SendEmailWithICSAsync(string toEmail, string subject, string body, string eventTitle, DateTime eventStart, string ics)
         {
             try
             {
                 using (var client = new SmtpClient(_smtpServer, _smtpPort))
                 {
                     client.UseDefaultCredentials = false;
+#if RELEASE
                     client.Credentials = new NetworkCredential(_smtpUsername, _smtpPassword);
                     client.EnableSsl = true;
+#endif
+
+#if DEBUG
+                    client.EnableSsl = false;
+#endif
 
                     var message = new MailMessage
                     {
-                        From = new MailAddress(_smtpUsername),
+                        From = new MailAddress("turnos@turnos.com"),
                         Subject = subject,
                         Body = body,
                         IsBodyHtml = true
                     };
                     message.To.Add(toEmail);
 
-                    // Crear archivo .ics
-                    var icsContent = GenerateICSContent(eventTitle, eventStart);
+                    var icsContent = ics;
                     var icsBytes = Encoding.UTF8.GetBytes(icsContent);
                     var memoryStream = new MemoryStream(icsBytes);
 
@@ -163,12 +204,38 @@ namespace BusinessEntity.Services
         }
 
 
-        private string GenerateICSContent(string eventTitle, DateTime eventStart)
+        private string GenerateICSContent(string eventTitle, DateTime eventStart, DateTime eventEnd, string profesional)
         {
             // Genera el contenido del archivo .ics en formato iCalendar
             // Aquí puedes usar bibliotecas como DDay.iCal para construir el contenido más complejo si es necesario.
+            string icsContent = $@"BEGIN:VCALENDAR
+        VERSION:2.0
+        PRODID:-//ical.marudot.com//iCal Event Maker
+        CALSCALE:GREGORIAN
+        BEGIN:VTIMEZONE
+        TZID:America/Argentina/Buenos_Aires
+        LAST-MODIFIED:20201011T015911Z
+        TZURL:http://tzurl.org/zoneinfo-outlook/America/Argentina/Buenos_Aires
+        X-LIC-LOCATION:America/Argentina/Buenos_Aires
+        BEGIN:STANDARD
+        TZNAME:-03
+        TZOFFSETFROM:-0300
+        TZOFFSETTO:-0300
+        DTSTART:19700101T000000
+        END:STANDARD
+        END:VTIMEZONE
+        BEGIN:VEVENT
+        DTSTAMP:20230810T210604Z
+        UID:1691701548811-60579@ical.marudot.com
+        DTSTART;TZID=America/Argentina/Buenos_Aires:{eventStart:yyyyMMddTHHmmssZ}
+        DTEND;TZID=America/Argentina/Buenos_Aires:{eventEnd:yyyyMMddTHHmmssZ}
+        SUMMARY:Turno con {profesional}
+        DESCRIPTION:Turno con {profesional}
+        END:VEVENT
+        END:VCALENDAR";
 
-            return $"BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//YourCompany//Event Calendar//EN\nBEGIN:VEVENT\nSUMMARY:{eventTitle}\nDTSTART:{eventStart:yyyyMMddTHHmmssZ}\nEND:VEVENT\nEND:VCALENDAR";
+            return icsContent;
+
         }
     }
 }

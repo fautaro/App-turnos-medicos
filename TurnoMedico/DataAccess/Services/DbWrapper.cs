@@ -212,5 +212,20 @@ namespace DataAccess.Services
                 throw;
             }
         }
+
+        public async Task<Profesional> GetProfesionalById(int Profesional_Id)
+        {
+            try
+            {
+                var Profesional = await _dbContext.Profesional.Where(e => e.Profesional_Id == Profesional_Id).FirstOrDefaultAsync();
+
+                return Profesional;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
     }
 }

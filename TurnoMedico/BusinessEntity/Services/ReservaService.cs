@@ -15,15 +15,16 @@ namespace BusinessEntity.Services
         private DbWrapper _dbWrapper;
         private ValidationService _validationService;
         private TokenService _tokenService;
+        private MailService _mailService;
         private readonly DateTime fechaActual = DateTime.Now;
 
 
-        public ReservaService(DbWrapper dbWrapper, ValidationService validationService, TokenService tokenService)
+        public ReservaService(DbWrapper dbWrapper, ValidationService validationService, TokenService tokenService, MailService mailService)
         {
             _dbWrapper = dbWrapper;
             _validationService = validationService;
             _tokenService = tokenService;
-
+            _mailService = mailService; 
         }
 
 
@@ -145,6 +146,7 @@ namespace BusinessEntity.Services
                             Telefono = datosTurno.Telefono
 
                         };
+                        await _mailService.EnviarMailConfirmacionTurno(datosTurno.Email, datosTurno.Profesional, datosTurno.ProfesionalId, TurnoGeneradoDB.FechaHora.ToString("dd/MM/yyyy HH:mm"), TurnoGeneradoDB.FechaHora, TurnoGeneradoDB.Token);
                     }
                 }
                 else
