@@ -1,17 +1,89 @@
 {
   "format": 1,
   "restore": {
-    "D:\\TurnsoMedicos\\App-turnos-medicos\\TurnoMedico\\TurnoMedico\\TurnoMedico.csproj": {}
+    "C:\\Users\\Fautaro\\Desktop\\Dashboard turnos Medicos\\App-turnos-medicos\\TurnoMedico\\TurnoMedico\\TurnoMedico.csproj": {}
   },
   "projects": {
-    "D:\\TurnsoMedicos\\App-turnos-medicos\\TurnoMedico\\TurnoMedico\\TurnoMedico.csproj": {
+    "C:\\Users\\Fautaro\\Desktop\\Dashboard turnos Medicos\\App-turnos-medicos\\TurnoMedico\\BusinessEntity\\BusinessEntity.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\TurnsoMedicos\\App-turnos-medicos\\TurnoMedico\\TurnoMedico\\TurnoMedico.csproj",
-        "projectName": "TurnoMedico",
-        "projectPath": "D:\\TurnsoMedicos\\App-turnos-medicos\\TurnoMedico\\TurnoMedico\\TurnoMedico.csproj",
+        "projectUniqueName": "C:\\Users\\Fautaro\\Desktop\\Dashboard turnos Medicos\\App-turnos-medicos\\TurnoMedico\\BusinessEntity\\BusinessEntity.csproj",
+        "projectName": "BusinessEntity",
+        "projectPath": "C:\\Users\\Fautaro\\Desktop\\Dashboard turnos Medicos\\App-turnos-medicos\\TurnoMedico\\BusinessEntity\\BusinessEntity.csproj",
         "packagesPath": "C:\\Users\\Fautaro\\.nuget\\packages\\",
-        "outputPath": "D:\\TurnsoMedicos\\App-turnos-medicos\\TurnoMedico\\TurnoMedico\\obj\\",
+        "outputPath": "C:\\Users\\Fautaro\\Desktop\\Dashboard turnos Medicos\\App-turnos-medicos\\TurnoMedico\\BusinessEntity\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\Fautaro\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "https://www.nuget.org/api/v2/": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {
+              "C:\\Users\\Fautaro\\Desktop\\Dashboard turnos Medicos\\App-turnos-medicos\\TurnoMedico\\DataAccess\\DataAccess.csproj": {
+                "projectPath": "C:\\Users\\Fautaro\\Desktop\\Dashboard turnos Medicos\\App-turnos-medicos\\TurnoMedico\\DataAccess\\DataAccess.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "dependencies": {
+            "DDay.iCal": {
+              "target": "Package",
+              "version": "[2.0.0, )"
+            },
+            "Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.400\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\Fautaro\\Desktop\\Dashboard turnos Medicos\\App-turnos-medicos\\TurnoMedico\\DataAccess\\DataAccess.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Fautaro\\Desktop\\Dashboard turnos Medicos\\App-turnos-medicos\\TurnoMedico\\DataAccess\\DataAccess.csproj",
+        "projectName": "DataAccess",
+        "projectPath": "C:\\Users\\Fautaro\\Desktop\\Dashboard turnos Medicos\\App-turnos-medicos\\TurnoMedico\\DataAccess\\DataAccess.csproj",
+        "packagesPath": "C:\\Users\\Fautaro\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Fautaro\\Desktop\\Dashboard turnos Medicos\\App-turnos-medicos\\TurnoMedico\\DataAccess\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Fautaro\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -38,6 +110,102 @@
       "frameworks": {
         "net6.0": {
           "targetAlias": "net6.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.Abstractions": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.Relational": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.400\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\Fautaro\\Desktop\\Dashboard turnos Medicos\\App-turnos-medicos\\TurnoMedico\\TurnoMedico\\TurnoMedico.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Fautaro\\Desktop\\Dashboard turnos Medicos\\App-turnos-medicos\\TurnoMedico\\TurnoMedico\\TurnoMedico.csproj",
+        "projectName": "TurnoMedico",
+        "projectPath": "C:\\Users\\Fautaro\\Desktop\\Dashboard turnos Medicos\\App-turnos-medicos\\TurnoMedico\\TurnoMedico\\TurnoMedico.csproj",
+        "packagesPath": "C:\\Users\\Fautaro\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Fautaro\\Desktop\\Dashboard turnos Medicos\\App-turnos-medicos\\TurnoMedico\\TurnoMedico\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\Fautaro\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "https://www.nuget.org/api/v2/": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {
+              "C:\\Users\\Fautaro\\Desktop\\Dashboard turnos Medicos\\App-turnos-medicos\\TurnoMedico\\BusinessEntity\\BusinessEntity.csproj": {
+                "projectPath": "C:\\Users\\Fautaro\\Desktop\\Dashboard turnos Medicos\\App-turnos-medicos\\TurnoMedico\\BusinessEntity\\BusinessEntity.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "dependencies": {
+            "DDay.iCal": {
+              "target": "Package",
+              "version": "[2.0.0, )"
+            },
+            "Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
