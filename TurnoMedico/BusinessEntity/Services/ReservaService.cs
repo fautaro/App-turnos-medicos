@@ -23,7 +23,7 @@ namespace BusinessEntity.Services
             _dbWrapper = dbWrapper;
             _validationService = validationService;
             _tokenService = tokenService;
-            _mailService = mailService; 
+            _mailService = mailService;
         }
 
 
@@ -43,11 +43,41 @@ namespace BusinessEntity.Services
                 if (agendaBloqueada != null)
                 {
                     response.DiasBloqueados = new List<string>();
+
                     foreach (var rangoBloqueado in agendaBloqueada)
                     {
-                        var DiasBloqueados = await _validationService.ConvertToArrayFechas(rangoBloqueado.FechaDesde, rangoBloqueado.FechaHasta);
-                        response.DiasBloqueados.AddRange(DiasBloqueados);
+                        if (rangoBloqueado.FechaHasta.Date > rangoBloqueado.FechaDesde.Date)
+                        {
+                            bool InicioCompleto = await _validationService.ValidarDiaCompletoBloqueado(request.Profesional_Id, rangoBloqueado.FechaDesde, true);
+                            bool FinCompleto = await _validationService.ValidarDiaCompletoBloqueado(request.Profesional_Id, rangoBloqueado.FechaHasta, false);
 
+                            var DiasBloqueados = await _validationService.ConvertToArrayFechas(rangoBloqueado.FechaDesde, rangoBloqueado.FechaHasta);
+
+                            if (!InicioCompleto)
+                            {
+                                response.DiasBloqueados.RemoveAll(fecha => fecha == rangoBloqueado.FechaDesde.ToString("yyyy/MM/dd"));
+                            }
+
+                            if (!FinCompleto)
+                            {
+                                response.DiasBloqueados.RemoveAll(fecha => fecha == rangoBloqueado.FechaHasta.ToString("yyyy/MM/dd"));
+                            }
+
+                            response.DiasBloqueados.AddRange(DiasBloqueados);
+                        }
+                        else
+                        {
+                            bool DiaCompletoBloqueado = await _validationService.ValidarDiaCompletoBloqueado(request.Profesional_Id, rangoBloqueado.FechaHasta, false);
+
+                            var DiasBloqueados = await _validationService.ConvertToArrayFechas(rangoBloqueado.FechaDesde, rangoBloqueado.FechaHasta);
+                            response.DiasBloqueados.AddRange(DiasBloqueados);
+
+                            if (!DiaCompletoBloqueado)
+                            {
+                                response.DiasBloqueados.RemoveAll(fecha => fecha == rangoBloqueado.FechaDesde.ToString("yyyy/MM/dd"));
+
+                            }
+                        }
                     }
                 }
 
@@ -145,7 +175,23 @@ namespace BusinessEntity.Services
                             Telefono = datosTurno.Telefono
 
                         };
-                        await _mailService.EnviarMailConfirmacionTurno(datosTurno.Email, datosTurno.Profesional, datosTurno.ProfesionalId, TurnoGeneradoDB.FechaHora.ToString("dd/MM/yyyy HH:mm"), TurnoGeneradoDB.FechaHora, TurnoGeneradoDB.Token);
+
+                        if (response.Success)
+                        {
+                            Notificacion notificacion = new Notificacion();
+
+                            notificacion.Titulo = $"{datosTurno.Nombre} {datosTurno.Apellido} reservó un turno";
+                            notificacion.Descripcion = $"El usuario {datosTurno.Nombre} {datosTurno.Apellido} reservó un turno para el día {datosTurno.Fecha} a las {datosTurno.Hora}. Datos del usuario: {datosTurno.Nombre} {datosTurno.Apellido} - {datosTurno.Fecha} {datosTurno.Hora} - {datosTurno.Email} - {datosTurno.Telefono}";
+                            notificacion.FechaHoraEvento = DateTime.Now;
+                            notificacion.Leido = false;
+                            notificacion.Eliminado = false;
+                            notificacion.Profesional_Id = datosTurno.ProfesionalId;
+                            
+                            var GuardarNotif = await _dbWrapper.AddNotificacion(notificacion);
+                            await _mailService.EnviarMailConfirmacionTurno(datosTurno.Email, datosTurno.Profesional, datosTurno.ProfesionalId, TurnoGeneradoDB.FechaHora.ToString("dd/MM/yyyy HH:mm"), TurnoGeneradoDB.FechaHora, TurnoGeneradoDB.Token);
+
+                        }
+
                     }
                 }
                 else
@@ -182,7 +228,8 @@ namespace BusinessEntity.Services
                 response.Token = Turno.Token;
                 response.Success = true;
 
-            } else
+            }
+            else
             {
                 response.Success = false;
                 response.Mensaje = "No hemos podido encontrar el turno que deseas cancelar";

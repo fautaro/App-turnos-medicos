@@ -13,48 +13,22 @@ namespace BusinessEntity.Services
 {
     public class MailService
     {
-        private readonly string _smtpServer;
-        private readonly int _smtpPort;
-        private readonly string _smtpUsername;
-        private readonly string _smtpPassword;
+
         private DbWrapper _dbWrapper;
 
-#if DEBUG
-        public MailService(DbWrapper dbWrapper, string smtpServer = "localhost", int smtpPort = 1025, string smtpUsername = null, string smtpPassword = null)
+        public MailService(DbWrapper dbWrapper)
         {
             _dbWrapper = dbWrapper;
-            _smtpServer = smtpServer;
-            _smtpPort = smtpPort;
-            _smtpUsername = smtpUsername;
-            _smtpPassword = smtpPassword;
-
         }
-#endif
-#if RELEASE
-        public MailService(DbWrapper dbWrapper, string smtpServer, int smtpPort, string smtpUsername, string smtpPassword)
-        {
-            _dbWrapper = dbWrapper;
-            _smtpServer = smtpServer;
-            _smtpPort = smtpPort;
-            _smtpUsername = smtpUsername;
-            _smtpPassword = smtpPassword;
-
-        }
-#endif
 
 
         public async Task EnviarMailConfirmacionTurno(string toEmail, string profesional, int Profesional_Id, string FechaHora, DateTime FechaHoraTurno, string token)
         {
 
+
             var Profesional = await _dbWrapper.GetProfesionalById(Profesional_Id);
+            var Ambiente = "http://agendario.ar";
 
-#if DEBUG
-            var Ambiente = "https://localhost:7139";
-#endif
-#if RELEASE
-            var Ambiente = "localhost:7139";
-
-#endif
             var Subject = $"Turno confirmado con {profesional}";
             var link = $"{Ambiente}/{Profesional.Alias}/cancelarturno?token={token}";
             var EventTitle = $"Turno con {profesional}";
@@ -94,7 +68,7 @@ namespace BusinessEntity.Services
                     </div>
                     <div style=""margin-top: 20px;"">
                         <p>Hola,</p>
-                        <p >Queremos confirmarte que tu turno ha sido confirmado.</p>
+                        <p >Queremos confirmarte que tu turno ha sido guardado correctamente.</p>
                         <p style=""margin-bottom:25px"">A continuación, los datos del turno:</p>
                         <ul style=""list-style-type: none; padding-left: 0;margin-bottom:25px"">
                             <li><strong>Fecha y Hora:</strong> {FechaHora}</li>
@@ -123,20 +97,18 @@ namespace BusinessEntity.Services
 
         public async Task SendEmail(string toEmail, string subject, string body)
         {
+
+            string _smtpServer = "relay.mailbaby.net";
+            int _smtpPort = 2525;
+            string _smtpUsername = "mb46503";
+            string _smtpPassword = "kzhYsRFyuXt2qrfEBkHS";
             try
             {
                 using (var client = new SmtpClient(_smtpServer, _smtpPort))
                 {
                     client.UseDefaultCredentials = false;
-#if RELEASE
                     client.Credentials = new NetworkCredential(_smtpUsername, _smtpPassword);
                     client.EnableSsl = true;
-#endif
-
-#if DEBUG
-                    client.EnableSsl = false;
-#endif
-
 
                     var message = new MailMessage
                     {
@@ -146,13 +118,11 @@ namespace BusinessEntity.Services
                         IsBodyHtml = true
                     };
                     message.To.Add(toEmail);
-
                     await client.SendMailAsync(message);
                 }
             }
             catch (Exception ex)
             {
-                throw;
             }
         }
 
@@ -163,23 +133,24 @@ namespace BusinessEntity.Services
 
         public async Task SendEmailWithICSAsync(string toEmail, string subject, string body, string eventTitle, DateTime eventStart, string ics)
         {
+
+            string _smtpServer = "relay.mailbaby.net";
+            int _smtpPort = 2525;
+            string _smtpUsername = "mb46503";
+            string _smtpPassword = "kzhYsRFyuXt2qrfEBkHS";
+
             try
             {
                 using (var client = new SmtpClient(_smtpServer, _smtpPort))
                 {
                     client.UseDefaultCredentials = false;
-#if RELEASE
                     client.Credentials = new NetworkCredential(_smtpUsername, _smtpPassword);
                     client.EnableSsl = true;
-#endif
 
-#if DEBUG
-                    client.EnableSsl = false;
-#endif
 
                     var message = new MailMessage
                     {
-                        From = new MailAddress("turnos@turnos.com"),
+                        From = new MailAddress("info@agendario.ar"),
                         Subject = subject,
                         Body = body,
                         IsBodyHtml = true
@@ -193,13 +164,12 @@ namespace BusinessEntity.Services
                     // Adjuntar el archivo .ics al correo
                     var attachment = new Attachment(memoryStream, "event.ics", "text/calendar");
                     message.Attachments.Add(attachment);
-
                     await client.SendMailAsync(message);
+
                 }
             }
             catch (Exception ex)
             {
-                throw;
             }
         }
 

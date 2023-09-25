@@ -21,6 +21,22 @@ namespace DataAccess.Services
             _dbContext = dbContext;
         }
 
+        // Add Notificacion
+        public async Task<bool> AddNotificacion(Notificacion notificacion)
+        {
+            try
+            {
+                await _dbContext.Notificacion.AddAsync(notificacion);
+                await _dbContext.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+                throw;
+            }
+        }
 
         // Agregar un nuevo turno
         public async Task<Turno> AddTurno(Turno turno)
@@ -83,7 +99,20 @@ namespace DataAccess.Services
                 throw;
             }
         }
+        public async Task<List<AgendaBloqueada>> GetHorariosBloqueadosDiaSeleccionado(int profesional_Id, DateTime fecha)
+        {
+            try
+            {
+                var AgendaBloqueada = await _dbContext.AgendaBloqueada.Where(e => e.Activo == true && (e.FechaDesde.Date == fecha.Date || e.FechaHasta.Date == fecha.Date)).ToListAsync();
 
+                return AgendaBloqueada;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
         public async Task<List<Turno>> GetTurnosReservados(int profesional_Id)
         {
             try

@@ -17,6 +17,7 @@ namespace DataAccess.Context
         public DbSet<Turno> Turno { get; set; }
         public DbSet<AgendaBloqueada> AgendaBloqueada { get; set; }
         public DbSet<Horario> Horario { get; set; }
+        public DbSet<Notificacion> Notificacion { get; set; }
 
 
 
@@ -73,6 +74,7 @@ namespace DataAccess.Context
                 entity.Property(e => e.Titulo).HasColumnName("Titulo").HasMaxLength(100); // Propiedad para el campo Titulo con límite de 100 caracteres
                 entity.Property(e => e.Descripcion).HasColumnName("Descripcion").HasMaxLength(500); // Propiedad para el campo Descripcion con límite de 500 caracteres
                 entity.Property(e => e.Imagen).HasColumnName("Imagen"); // Propiedad para el campo Imagen (varbinary)
+                entity.Property(e => e.Intervalo).HasColumnName("Intervalo");
 
 
             });
@@ -98,6 +100,19 @@ namespace DataAccess.Context
                 entity.Property(e => e.Hora).HasColumnName("Hora");
             });
 
+            modelBuilder.Entity<Notificacion>(entity =>
+            {
+                entity.ToTable("Notificacion");
+                entity.HasKey(e => e.Notificacion_Id);
+                entity.Property(e => e.Notificacion_Id).HasColumnName("Notificacion_Id").IsRequired();
+                entity.Property(e => e.Profesional_Id).HasColumnName("Profesional_Id").IsRequired();
+                entity.Property(e => e.Titulo).HasColumnName("Titulo").HasMaxLength(50).IsRequired();
+                entity.Property(e => e.Descripcion).HasColumnName("Descripcion").HasMaxLength(500);
+                entity.Property(e => e.Leido).HasColumnName("Leido").IsRequired();
+                entity.Property(e => e.FechaHoraEvento).HasColumnName("FechaHoraEvento");
+                entity.Property(e => e.Eliminado).HasColumnName("Eliminado");
+
+            });
         }
     }
 }

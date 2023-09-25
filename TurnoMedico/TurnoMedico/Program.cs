@@ -3,6 +3,7 @@ using DataAccess.Context;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using DataAccess.Services;
+using TurnoMedico.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +20,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddMvc().AddRazorRuntimeCompilation();
 builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 
 
 builder.Services.AddTransient<ReservaService, ReservaService>();
