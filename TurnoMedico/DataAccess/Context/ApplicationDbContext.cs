@@ -18,6 +18,7 @@ namespace DataAccess.Context
         public DbSet<AgendaBloqueada> AgendaBloqueada { get; set; }
         public DbSet<Horario> Horario { get; set; }
         public DbSet<Notificacion> Notificacion { get; set; }
+        public DbSet<Evento> Evento { get; set; }
 
 
 
@@ -112,6 +113,17 @@ namespace DataAccess.Context
                 entity.Property(e => e.FechaHoraEvento).HasColumnName("FechaHoraEvento");
                 entity.Property(e => e.Eliminado).HasColumnName("Eliminado");
 
+            });
+
+            modelBuilder.Entity<Evento>(entity =>
+            {
+                entity.ToTable("Evento"); // Nombre de la tabla en la base de datos
+                entity.HasKey(e => e.Evento_Id); // Clave primaria
+                entity.Property(e => e.Evento_Id).HasColumnName("Evento_Id"); // Mapeo de propiedad
+                entity.Property(e => e.Usuario_Id).HasColumnName("Usuario_Id"); // Mapeo de propiedad
+                entity.Property(e => e.Detalle).HasColumnName("Detalle"); // Mapeo de propiedad
+                entity.Property(e => e.Entidad).HasColumnName("Entidad"); // Mapeo de propiedad
+                entity.Property(e => e.FechaHora).HasColumnName("FechaHora"); // Mapeo de propiedad
             });
         }
     }
