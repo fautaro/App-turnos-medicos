@@ -16,4 +16,8 @@
     <ProjectReference Include="..\BusinessEntity\BusinessEntity.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\landing\" />
+  </ItemGroup>
+
 </Project>
