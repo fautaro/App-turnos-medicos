@@ -29,7 +29,7 @@ namespace BusinessEntity.Services
             _smtpPassword = smtpPassword;
         }
 
-        public async Task EnviarMailCancelacionTurno(int id)
+        public async Task<bool> EnviarMailCancelacionTurno(string id)
         {
 
             try
@@ -139,12 +139,15 @@ namespace BusinessEntity.Services
                         message.Attachments.Add(attachment);
                         await client.SendMailAsync(message);
                         await _dbWrapper.GuardarEvento("Email", $"Mail de cancelacion de turno {id} enviado a{DatosTurno.Email}", "");
-
                     }
+
                 }
+                return true;
+
             }
             catch (Exception ex)
             {
+                return false;
                 await _dbWrapper.GuardarEvento("Email", ex.Message, "");
             }
 

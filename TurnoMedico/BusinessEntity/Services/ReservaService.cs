@@ -250,6 +250,7 @@ namespace BusinessEntity.Services
                 if (Validacion.Success)
                 {
                     await _dbWrapper.CancelarTurno(request.Token);
+                    var responsemail = await _mailService.EnviarMailCancelacionTurno(request.Token);
 
                     response.Success = true;
                     response.Mensaje = $"El turno ha sido cancelado correctamente";

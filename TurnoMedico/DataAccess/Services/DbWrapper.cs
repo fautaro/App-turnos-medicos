@@ -43,11 +43,11 @@ namespace DataAccess.Services
         }
         // Enviar mail cancelar turno
 
-        public async Task<Turno> GetDatosTurno(int id)
+        public async Task<Turno> GetDatosTurno(string Token)
         {
             try
             {
-                var Turno = await _dbContext.Turno.Where(e => e.Turno_Id == id).FirstOrDefaultAsync();
+                var Turno = await _dbContext.Turno.Where(e => e.Token == Token).FirstOrDefaultAsync();
 
                 return Turno;
             }
