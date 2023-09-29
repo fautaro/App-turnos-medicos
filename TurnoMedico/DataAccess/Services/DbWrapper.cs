@@ -21,6 +21,43 @@ namespace DataAccess.Services
             _dbContext = dbContext;
         }
 
+        // Guardar Evento
+        public async Task GuardarEvento(string? Entidad, string Detalle, string? Usuario_Id)
+        {
+            Evento evento = new Evento();
+            try
+            {
+                evento.Entidad = Entidad;
+                evento.Detalle = Detalle;
+                evento.Usuario_Id = Usuario_Id;
+                evento.FechaHora = DateTime.Now;
+
+                _dbContext.Evento.AddAsync(evento);
+                _dbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+        // Enviar mail cancelar turno
+
+        public async Task<Turno> GetDatosTurno(int id)
+        {
+            try
+            {
+                var Turno = await _dbContext.Turno.Where(e => e.Turno_Id == id).FirstOrDefaultAsync();
+
+                return Turno;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         // Add Notificacion
         public async Task<bool> AddNotificacion(Notificacion notificacion)
         {
