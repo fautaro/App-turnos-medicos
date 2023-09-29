@@ -32,25 +32,31 @@ namespace BusinessEntity.Services
             var Subject = $"Turno confirmado con {profesional}";
             var link = $"{Ambiente}/{Profesional.Alias}/cancelarturno?token={token}";
             var EventTitle = $"Turno con {profesional}";
-            string Body = $@"<!DOCTYPE html>
+            string body = 
+            $@"<!DOCTYPE html>
             <html>
             <head>
+                <meta charset=""UTF-8"">
+                <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
                 <link rel=""stylesheet"" href=""https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"">
+                <link href=""https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Jost:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"" rel=""stylesheet"">
                 <style>
                     body {{
                         font-family: Arial, sans-serif;
+                        background-color: #f4f4f4;
+                        padding: 20px;
                     }}
                     .container {{
                         max-width: 600px;
                         margin: 0 auto;
+                        background-color: white;
                         padding: 20px;
-                        border: 1px solid #ccc;
-                        border-radius: 5px;
-                        background-color: #37517e;
+                        border-radius: 10px;
+                        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
                     }}
                     .header {{
                         text-align: center;
-                        background-color: #37517e;
+                        background-color: #007bff;
                         color: white;
                         padding: 10px;
                         border-radius: 5px 5px 0 0;
@@ -66,15 +72,16 @@ namespace BusinessEntity.Services
                         text-align: center;
                         background-color: #37517e;
                         margin-bottom: 30px;
+                        padding: 10px;
+                        border-radius: 5px;
                     }}
                 </style>
-                <link href=""https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"" rel=""stylesheet"">
             </head>
-            <body style=""font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;"">
+            <body>
                 <div class=""container"">
                     <div class=""sidebar-brand-text mx-3"">AGENDARIO</div>
                     <div style=""text-align: center;"">
-                        <h2 style=""color: #37517e;"">¡Tu turno ha sido confirmado!</h2>
+                        <h2 style=""color: #007bff;"">¡Tu turno ha sido confirmado!</h2>
                     </div>
                     <div style=""margin-top: 20px;"">
                         <p>Hola,</p>
@@ -87,7 +94,7 @@ namespace BusinessEntity.Services
                     </div>
                     <div style=""margin-top: 50px; text-align: center; margin-bottom: 35px;"">
                         <p style=""margin-bottom: 35px;"">Si necesitas cancelar el turno, puedes hacerlo utilizando el botón a continuación:</p>
-                        <a href=""{link}"" style=""background-color: #37517e; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: 600;"">Cancelar Turno</a>
+                        <a href=""{link}"" style=""background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: 600;"">Cancelar Turno</a>
                     </div>
                     <div style=""margin-top: 20px;"">
                         <p>Recuerda que los cambios en los turnos deben realizarse con anticipación.</p>
@@ -96,11 +103,12 @@ namespace BusinessEntity.Services
                 </div>
             </body>
             </html>";
-            
+
+
 
             var ics = GenerateICSContent(EventTitle, FechaHoraTurno, FechaHoraTurno.AddHours(1), profesional);
 
-            await SendEmailWithICSAsync(toEmail, Subject, Body, EventTitle, FechaHoraTurno, ics);
+            await SendEmailWithICSAsync(toEmail, Subject,body, EventTitle, FechaHoraTurno, ics);
         }
 
 
