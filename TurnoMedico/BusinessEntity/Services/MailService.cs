@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 using DataAccess.Services;
 using DataAccess.Models;
+using Microsoft.Extensions.Hosting;
 
 namespace BusinessEntity.Services
 {
@@ -20,13 +21,9 @@ namespace BusinessEntity.Services
         private string _smtpUsername = "mb46503";
         private string _smtpPassword = "kzhYsRFyuXt2qrfEBkHS";
 
-        public MailService(DbWrapper dbWrapper, string smtpServer, int smtpPort, string smtpUsername, string smtpPassword)
+        public MailService(DbWrapper dbWrapper)
         {
             _dbWrapper = dbWrapper;
-            _smtpServer = smtpServer;
-            _smtpPort = smtpPort;
-            _smtpUsername = smtpUsername;
-            _smtpPassword = smtpPassword;
         }
 
         public async Task<bool> EnviarMailCancelacionTurno(string id)
@@ -42,13 +39,12 @@ namespace BusinessEntity.Services
                 <html>
                 <head>
                     <link rel=""stylesheet"" href=""https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"">
-                    <link href=""https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Jost:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"" rel=""stylesheet"">
                     <style>
                         body {{
                             font-family: Arial, sans-serif;
                         }}
                         .container {{
-                            max-width: 600px;
+                            width: 600px;
                             margin: 0 auto;
                             padding: 20px;
                             border: 1px solid #ccc;
@@ -77,10 +73,12 @@ namespace BusinessEntity.Services
                     </style>
                 </head>
                 <body style=""font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;"">
-                    <div style=""max-width: 600px; margin: 0 auto; background-color: white; font-weight: 500; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);"">
-                        <div class=""sidebar-brand-text mx-3"" style=""font-family: Jost;font-weight: 400;color: white;font-size: 24px;text-align: center;background-color: #37517e;margin-bottom: 30px;"">AGENDARIO</div>
+                    <div style=""width: 600px; margin: 0 auto; background-color: white; font-weight: 500; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);"">
+                                <div style=""background-color: #37517e; text-align: center; padding: 15px; border-radius: 5px; margin-bottom: 30px;"">
+            <img src=""https://i.ibb.co/dQYtnwL/logodef.png"" alt=""logodef"" border=""0"" style=""display: block; margin: 0 auto; width: 120px; height: auto;"">
+        </div>
                         <div style=""text-align: center;"">
-                            <h2 style=""color: #37517e;"">¡Turno Cancelado!</h2>
+                            <h3 style=""color: #37517e;"">¡Turno Cancelado!</h2>
                         </div>
                         <div style=""margin-top: 20px;"">
                             <p>Hola,</p>
@@ -165,77 +163,79 @@ namespace BusinessEntity.Services
             var Subject = $"Turno confirmado con {profesional}";
             var link = $"{Ambiente}/{Profesional.Alias}/cancelarturno?token={token}";
             var EventTitle = $"Turno con {profesional}";
-            string body = 
-            $@"<!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset=""UTF-8"">
-                <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
-                <link rel=""stylesheet"" href=""https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"">
-                <link href=""https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Jost:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"" rel=""stylesheet"">
-                <style>
-                    body {{
-                        font-family: Arial, sans-serif;
-                        background-color: #f4f4f4;
-                        padding: 20px;
-                    }}
-                    .container {{
-                        max-width: 600px;
-                        margin: 0 auto;
-                        background-color: white;
-                        padding: 20px;
-                        border-radius: 10px;
-                        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-                    }}
-                    .header {{
-                        text-align: center;
-                        background-color: #007bff;
-                        color: white;
-                        padding: 10px;
-                        border-radius: 5px 5px 0 0;
-                    }}
-                    .content {{
-                        padding: 20px;
-                    }}
-                    .sidebar-brand-text {{
-                        font-family: Jost;
-                        font-weight: 500;
-                        color: white;
-                        font-size: 24px;
-                        text-align: center;
-                        background-color: #37517e;
-                        margin-bottom: 30px;
-                        padding: 10px;
-                        border-radius: 5px;
-                    }}
-                </style>
-            </head>
-            <body>
-                <div class=""container"">
-                    <div class=""sidebar-brand-text mx-3"">AGENDARIO</div>
-                    <div style=""text-align: center;"">
-                        <h2 style=""color: #007bff;"">¡Tu turno ha sido confirmado!</h2>
-                    </div>
-                    <div style=""margin-top: 20px;"">
-                        <p>Hola,</p>
-                        <p>Queremos confirmarte que tu turno ha sido guardado correctamente.</p>
-                        <p style=""margin-bottom: 25px;"">A continuación, los datos del turno:</p>
-                        <ul style=""list-style-type: none; padding-left: 0; margin-bottom: 25px;"">
-                            <li><strong>Fecha y Hora:</strong> {FechaHora}</li>
-                            <li><strong>Profesional:</strong> {profesional}</li>
-                        </ul>
-                    </div>
-                    <div style=""margin-top: 50px; text-align: center; margin-bottom: 35px;"">
-                        <p style=""margin-bottom: 35px;"">Si necesitas cancelar el turno, puedes hacerlo utilizando el botón a continuación:</p>
-                        <a href=""{link}"" style=""background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: 600;"">Cancelar Turno</a>
-                    </div>
-                    <div style=""margin-top: 20px;"">
-                        <p>Recuerda que los cambios en los turnos deben realizarse con anticipación.</p>
-                        <p>Saludos,</p>
-                    </div>
-                </div>
-            </body>
-            </html>";
+            string body = $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset=""UTF-8"">
+    <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
+    <link rel=""stylesheet"" href=""https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"">
+    <style>
+        body {{
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }}
+        .container {{
+            width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }}
+        .header {{
+            text-align: center;
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            border-radius: 5px 5px 0 0;
+        }}
+        .content {{
+            padding: 20px;
+        }}
+        .sidebar-brand-text {{
+            font-family: Jost;
+            font-weight: 500;
+            color: white;
+            font-size: 24px;
+            text-align: center;
+            background-color: #37517e;
+            margin-bottom: 30px;
+            padding: 10px;
+            border-radius: 5px;
+        }}
+    </style>
+</head>
+<body>
+    <div class=""container"">
+        <div style=""background-color: #37517e; text-align: center; padding: 15px; border-radius: 5px; margin-bottom: 30px;"">
+            <img src=""https://i.ibb.co/dQYtnwL/logodef.png"" alt=""logodef"" border=""0"" style=""display: block; margin: 0 auto; width: 120px; height: auto;"">
+        </div>
+        <div style=""text-align: center;"">
+            <h3 style=""color: #007bff;"">¡Tu turno ha sido confirmado!</h3>
+        </div>
+        <div style=""margin-top: 20px;"">
+            <p>Hola,</p>
+            <p>Queremos confirmarte que tu turno ha sido guardado correctamente.</p>
+            <p style=""margin-bottom: 25px;"">A continuación, los datos del turno:</p>
+            <ul style=""list-style-type: none; padding-left: 0; margin-bottom: 25px;"">
+                <li><strong>Fecha y Hora:</strong> {FechaHora}</li>
+                <li><strong>Profesional:</strong> {profesional}</li>
+            </ul>
+        </div>
+        <div style=""margin-top: 50px; text-align: center; margin-bottom: 35px;"">
+            <p style=""margin-bottom: 35px;"">Si necesitas cancelar el turno, puedes hacerlo utilizando el botón a continuación:</p>
+            <a href=""{link}"" style=""background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: 600;"">Cancelar Turno</a>
+        </div>
+        <div style=""margin-top: 20px;"">
+            <p>Recuerda que los cambios en los turnos deben realizarse con anticipación.</p>
+            <p>Saludos,</p>
+        </div>
+    </div>
+</body>
+</html>";
+
 
 
 
